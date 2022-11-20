@@ -53,10 +53,14 @@ export async function getInitialState(): Promise<{
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
   return {
+    // 定义内容样式
+    contentStyle:{
+      margin:0
+    },
     siderWidth: 220,
     fixSiderbar: true,
     siderLinks: false,
-    // rightContentRender: () => <div>123</div>,
+    rightContentRender: () => <div>123</div>,
     disableContentMargin: false,
     // 关闭展开收起菜单按钮
     collapsedButtonRender: false,
@@ -68,6 +72,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     // footerRender: () => <Footer />,
     footerRender: false,
     headerRender: false,
+    pageTitleRender:()=><div>自定义页面头部组件</div>,
     onPageChange: () => {
       const { location } = history;
       // 如果没有登录，重定向到 login
@@ -75,11 +80,13 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
         history.push(loginPath);
       }
     },
+    // 左侧菜单头部设置 主要设置logo
     menuHeaderRender: () => (
       <a href="/">
         <img src="../echat_logo.png" alt="" />
       </a>
     ),
+    // 左侧菜单底部设置 主要设置 打开测试环境 按钮
     menuFooterRender: () => (
       <div style={{ textAlign: 'center', height: '48px', marginBottom: '40px' }}>
         <Button
