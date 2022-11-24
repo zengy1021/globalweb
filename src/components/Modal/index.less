@@ -1,0 +1,66 @@
+.custom_modal {
+  overflow: hidden;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0px 4px 30px 0px rgba(0, 0, 0, 0.1);
+  .custom_modal_box {
+    display: flex;
+    flex-direction: column;
+    .custom_modal_box_content {
+      box-sizing: border-box;
+      max-height: 600px;
+      padding: 20px 0;
+      overflow-y: auto;
+    }
+    .custom_modal_box_footer {
+      display: flex;
+      flex-direction: row-reverse;
+      height: 40px;
+      .btn {
+        width: 80px;
+        height: 40px;
+        border-radius: 6px;
+        &:first-child {
+          margin-right: 20px;
+          background: #eaeaea;
+          border-color: #eaeaea;
+        }
+      }
+    }
+  }
+  :global {
+    .ant-modal-content {
+      box-sizing: border-box;
+      padding: 24px 30px 30px;
+      .ant-modal-close {
+        top: 24px;
+        right: 30px;
+        width: 32px;
+        height: 32px;
+        .ant-modal-close-x {
+          width: 32px;
+          height: 32px;
+          line-height: 32px;
+        }
+      }
+      .ant-modal-header {
+        display: flex;
+        align-items: center;
+        height: 32px;
+        padding: 0;
+        border: 0;
+        .ant-modal-title {
+          color: #333333;
+          font-weight: 700;
+          font-size: 16px;
+        }
+      }
+      .ant-modal-body {
+        padding: 0;
+        color: #333333;
+        font-weight: 400;
+        font-size: 14px;
+      }
+    }
+  }
+}

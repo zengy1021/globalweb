@@ -53,14 +53,16 @@ export async function getInitialState(): Promise<{
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
   return {
+    // 禁止自动切换到移动页面
+    disableMobile: true,
     // 定义内容样式
-    contentStyle:{
-      margin:0
+    contentStyle: {
+      margin: 0,
     },
     siderWidth: 220,
     fixSiderbar: true,
     siderLinks: false,
-    rightContentRender: () => <div>123</div>,
+    // rightContentRender: () => <div>123</div>,
     disableContentMargin: false,
     // 关闭展开收起菜单按钮
     collapsedButtonRender: false,
@@ -72,7 +74,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     // footerRender: () => <Footer />,
     footerRender: false,
     headerRender: false,
-    pageTitleRender:()=><div>自定义页面头部组件</div>,
+    // pageTitleRender:()=><div>自定义页面头部组件</div>,
     onPageChange: () => {
       const { location } = history;
       // 如果没有登录，重定向到 login
@@ -86,6 +88,28 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
         <img src="../echat_logo.png" alt="" />
       </a>
     ),
+    // menuItemRender: (item: any, dom: any) => (
+    //   <div
+    //     style={{
+    //       display: 'flex',
+    //       alignItems: 'center',
+    //       gap: 8,
+    //     }}
+    //   >
+    //     <div className="menu_item_dot"></div> <span className="menu_item_span">{dom}</span>
+    //   </div>
+    // ),
+    // subMenuItemRender: (item: any, dom: any) => (
+    //   <div
+    //     style={{
+    //       display: 'flex',
+    //       alignItems: 'center',
+    //       gap: 8,
+    //     }}
+    //   >
+    //     pre {dom}
+    //   </div>
+    // ),
     // 左侧菜单底部设置 主要设置 打开测试环境 按钮
     menuFooterRender: () => (
       <div style={{ textAlign: 'center', height: '48px', marginBottom: '40px' }}>

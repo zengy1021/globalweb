@@ -89,3 +89,5 @@ if (pwa) {
 
   clearCache();
 }
+
+window.ant - menu - inline - collapsed;
