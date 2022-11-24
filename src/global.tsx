@@ -89,5 +89,18 @@ if (pwa) {
 
   clearCache();
 }
+// 监听页面大小变化  移除样式 修复移动端显示问题
+const resizeUpdate = ()=>{
+  let w = window.innerWidth;
+  if(w<992){
+   setTimeout(() => {
+     const leftMenu = document.getElementsByClassName('ant-pro-sider-menu')[0]
+     let newClassName = leftMenu.className.replaceAll('ant-menu-inline-collapsed','')
+     leftMenu.className = newClassName
+   }, 500);
+  }
+}
+window.addEventListener('resize', resizeUpdate);
+resizeUpdate();
 
-window.ant - menu - inline - collapsed;
+// window.ant - menu - inline - collapsed;

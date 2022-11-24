@@ -20,7 +20,9 @@ export default function CompBox(props: any) {
             ) : (
               <div className={style.comp_list_box}>
                 {item.children.map((child: any, cIndex: number) => (
-                  <div className={style.comp_item} key={cIndex}>
+                  <div  className={classNames(`${style.comp_item}`, {
+                    [`${style.comp_item_hidden}`]: !child.id,
+                  })} key={cIndex}>
                     <div className={style.comp_item_img}>
                       <Image width={'100%'} src={child.bgImg} preview={false}></Image>
                     </div>
