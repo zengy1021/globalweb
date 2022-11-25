@@ -234,7 +234,9 @@ ol {
 // #####表格-----start
 .ant-table-thead
   > tr
-  > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
+  > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not(
+    [colspan]
+  )::before {
   display: none;
 }
 .ant-table-thead > tr > th {
@@ -270,7 +272,14 @@ ol {
 .ant-form-item-explain-error {
   font-size: 12px;
 }
-.ant-select-selector{
+.ant-select-selector {
   border-radius: 6px !important;
 }
 // #####表单-----end
+// #####下拉菜单-----start
+.dropMinWidth {
+  .ant-dropdown-menu {
+    min-width: 100px;
+  }
+}
+// #####下拉菜单-----end

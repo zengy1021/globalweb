@@ -14,7 +14,7 @@ const Settings: LayoutSettings & {
   colorWeak: false,
   title: false,
   headerHeight: 72,
-  logo: '../echat_logo.png',
+  logo: './echat_logo.png',
   splitMenus: false,
   pwa: false,
 };

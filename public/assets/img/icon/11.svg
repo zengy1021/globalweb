@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="55" height="55" viewBox="0 0 55 55">
+  <title>跨境icon</title>
+  <rect x="5" y="48" width="45" height="2" rx="1" style="fill: #171d2e"/>
+  <g>
+    <path d="M28.006,6.971a1,1,0,0,1,.994,1V48H10V12.811a1,1,0,0,1,.726-.962l17-4.838a1.052,1.052,0,0,1,.28-.04m0-2a3.017,3.017,0,0,0-.827.116l-17,4.838A3,3,0,0,0,8,12.811V50H31V7.973a3,3,0,0,0-2.994-3Z" style="fill: #171d2e"/>
+    <path d="M32,16.969h0a1.011,1.011,0,0,1,.363.069l12,4.625A1.007,1.007,0,0,1,45,22.6V48H31V17.971a1,1,0,0,1,1-1m0-2a3,3,0,0,0-3,3V50H47V22.6a3,3,0,0,0-1.921-2.8l-12-4.625a3,3,0,0,0-1.082-.2Z" style="fill: #171d2e"/>
+  </g>
+  <rect x="14" y="20" width="11" height="2" rx="1" style="fill: #171d2e"/>
+  <rect x="14" y="28" width="11" height="2" rx="1" style="fill: #171d2e"/>
+  <rect x="14" y="36" width="11" height="2" rx="1" style="fill: #171d2e"/>
+  <rect x="34" y="28" width="8" height="2" rx="1" style="fill: #fc4b1b"/>
+  <rect x="34" y="36" width="8" height="2" rx="1" style="fill: #fc4b1b"/>
+</svg>

@@ -8,7 +8,7 @@ import type { RunTimeLayoutConfig } from 'umi';
 import { history, Link } from 'umi';
 import defaultSettings from '../config/defaultSettings';
 import { currentUser as queryCurrentUser } from './services/ant-design-pro/api';
-
+import Logo from '@/assets/imgs/echat_logo.png';
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
 
@@ -85,7 +85,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     // 左侧菜单头部设置 主要设置logo
     menuHeaderRender: () => (
       <a href="/">
-        <img src="../echat_logo.png" alt="" />
+        <img src={Logo} alt="" />
       </a>
     ),
     // menuItemRender: (item: any, dom: any) => (

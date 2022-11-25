@@ -1,12 +1,14 @@
 import style from './index.less';
-import { Button, Avatar, Form, Input, Upload, message,Tabs,Select   } from 'antd';
+import { Button, Avatar, Form, Input, Upload, message, Tabs, Select } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 import { useState, useEffect } from 'react';
 import PremisionSelector from './PremisionSelector';
 import classNames from 'classnames';
 import IconBtn from '@/components/IconBtn';
-
+import MyEditor from '@/components/BraftEditor';
+// import CodeMirrorBox from '@/components/CodeMirror';
+const { TextArea } = Input;
 const defaultList: any[] = [
   {
     id: 1,
@@ -81,6 +83,7 @@ const defaultList: any[] = [
 ];
 const defaultUserInfo: any = {};
 export default function Detail(props: any) {
+  const [value, setValue] = useState('');
   const [form] = Form.useForm();
   const saveForm = async () => {
     try {
@@ -94,84 +97,129 @@ export default function Detail(props: any) {
   const onChange = (value: string) => {
     console.log(`selected ${value}`);
   };
-  
+
   const onSearch = (value: string) => {
     console.log('search:', value);
   };
-  
+  // 编辑器 开始
+  const onEditorChange = (val: any) => {
+    console.log(val, 'val');
+    setValue(val);
+  };
+  //不需要的操作工具
+  const excludeControlsConfig = [
+    'emoji',
+    // 'superscript',
+    // 'subscript',
+    // 'strike-through',
+    'media',
+    // 'blockquote',
+    // 'remove-styles',
+    // 'code',
+    // 'fullscreen',
+  ];
+  // const imageControlsConfig = [
+  //   'align-left',
+  //   'align-center',
+  //   'align-right',
+  //   'size',
+  //   {
+  //     text: <Icon type="delete" />,
+  //     onClick: (block:any, mediaData:any) => {
+  //       this.removeFile(mediaData.name, 'image', block, mediaData.url);
+  //     },
+  //   },
+  // ];
+  const extendControlsConfig = [
+    {
+      key: 'custom-modal',
+      type: 'button',
+      text: '上传文件',
+      // onClick: UploadTemplateModal.show
+    },
+  ];
+  // 编辑器 结束
   return (
     <div className={style.detail_box}>
       <div className={style.detail_content}>
         <div className={style.detail_content_title}>组件</div>
-        <Tabs
-          defaultActiveKey="1"
-        >
+        <Tabs defaultActiveKey="1">
           <Tabs.TabPane tab="信息" key="1">
-           <div className={style.detail_content_user}>
-                <div className={style.detail_content_userInfo}>
-                  <Form
-                    form={form}
-                    labelCol={{ span: 24 }}
-                    wrapperCol={{ span: 24 }}
-                    layout="vertical"
-                    initialValues={defaultUserInfo}
-                    size={'large'}
-                    scrollToFirstError={true}
-                    requiredMark={false}
-                    validateMessages={{ required: '${label}不能为空' }}
+            <div className={style.detail_content_user}>
+              <div className={style.detail_content_userInfo}>
+                <Form
+                  form={form}
+                  labelCol={{ span: 24 }}
+                  wrapperCol={{ span: 24 }}
+                  layout="vertical"
+                  initialValues={defaultUserInfo}
+                  size={'large'}
+                  scrollToFirstError={true}
+                  requiredMark={false}
+                  validateMessages={{ required: '${label}不能为空' }}
+                >
+                  <Form.Item
+                    label="分类"
+                    name="type"
+                    rules={[
+                      {
+                        required: true,
+                      },
+                    ]}
                   >
-                     <Form.Item
-                      label="分类"
-                      name="type"
-                      rules={[
+                    <Select
+                      showSearch
+                      optionFilterProp="children"
+                      onChange={onChange}
+                      onSearch={onSearch}
+                      filterOption={(input, option) =>
+                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                      }
+                      options={[
                         {
-                          required: true,
+                          value: 'jack',
+                          label: 'Jack',
+                        },
+                        {
+                          value: 'lucy',
+                          label: 'Lucy',
+                        },
+                        {
+                          value: 'tom',
+                          label: 'Tom',
                         },
                       ]}
-                    >
-                      <Select
-                          showSearch
-                          optionFilterProp="children"
-                          onChange={onChange}
-                          onSearch={onSearch}
-                          filterOption={(input, option) =>
-                            (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-                          }
-                          options={[
-                            {
-                              value: 'jack',
-                              label: 'Jack',
-                            },
-                            {
-                              value: 'lucy',
-                              label: 'Lucy',
-                            },
-                            {
-                              value: 'tom',
-                              label: 'Tom',
-                            },
-                          ]}
-                        />
-                    </Form.Item>
-                    <Form.Item
-                      label="姓名"
-                      name="name"
-                      rules={[
-                        {
-                          required: true,
-                        },
-                      ]}
-                    >
-                      <Input />
-                    </Form.Item>
-                  </Form>
-                </div>
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    label="姓名"
+                    name="name"
+                    rules={[
+                      {
+                        required: true,
+                      },
+                    ]}
+                  >
+                    <Input />
+                  </Form.Item>
+                </Form>
               </div>
-            </Tabs.TabPane>
-          <Tabs.TabPane tab="代码" key="2">
-          代码
+            </div>
           </Tabs.TabPane>
-          </Tabs>
+          <Tabs.TabPane tab="代码" key="2">
+            <div style={{ height: 'calc(100vh - 152px - 100px)' }}>
+              <MyEditor
+                value={value}
+                onChange={(v: any) => onEditorChange(v.toHTML())}
+                // excludeControls={excludeControlsConfig}
+                // imageControls={imageControlsConfig}
+                // extendControls={extendControlsConfig}
+              ></MyEditor>
+            </div>
+            {/* <TextArea autoSize={{ minRows: 10 }}></TextArea> */}
+            {/* <CodeMirrorBox code={123}></CodeMirrorBox> */}
+          </Tabs.TabPane>
+        </Tabs>
       </div>
       <div className={style.detail_footer}>
         <Button className={style.btn} type="default" onClick={() => props.closeDrawer()}>

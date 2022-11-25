@@ -24,7 +24,7 @@
     path: '/admin',
     name: 'admin',
     icon: 'crown',
-    hideInBreadcrumb: true,         // 在面包屑中隐藏
+    hideInBreadcrumb: true, // 在面包屑中隐藏
     // access: 'canAdmin',
     routes: [
       {
@@ -38,6 +38,13 @@
         name: 'sub-page2',
         icon: 'smile',
         component: './admin/Components',
+      },
+      {
+        path: '/admin/component/preview',
+        name: 'preview',
+        icon: 'smile',
+        hideInMenu: true,
+        component: './admin/Components/preview',
       },
       {
         path: '/admin/template',

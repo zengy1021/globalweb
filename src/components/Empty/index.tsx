@@ -1,10 +1,11 @@
 import { Empty } from 'antd';
 import style from './index.less';
+import NullImg from '@/assets/imgs/null.svg';
 export default function EmptyBox() {
   return (
     <div className={style.empty_box}>
       <Empty
-        image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+        image={NullImg}
         imageStyle={{
           height: 160,
         }}

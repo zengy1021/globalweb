@@ -1,0 +1,23 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "82720741",
+      "name": "线型_用户_1",
+      "font_class": "xianxing_yonghu_1",
+      "unicode": "e743",
+      "unicode_decimal": 59203
+    },
+    {
+      "icon_id": "82720757",
+      "name": "线型_国际化_1",
+      "font_class": "xianxing_guojihua_1",
+      "unicode": "e753",
+      "unicode_decimal": 59219
+    }
+  ]
+}

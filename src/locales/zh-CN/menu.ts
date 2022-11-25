@@ -5,6 +5,7 @@ export default {
   'menu.admin': '管理',
   'menu.admin.sub-page1': '用户',
   'menu.admin.sub-page2': '组件',
+  'menu.admin.sub-page2.preview': '预览',
   'menu.admin.sub-page3': '模板',
   'menu.admin.sub-page4': '菜单',
   'menu.admin.sub-page5': '审核',
