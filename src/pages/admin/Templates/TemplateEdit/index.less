@@ -1,0 +1,95 @@
+.component_content {
+  box-sizing: border-box;
+  height: 100%;
+  padding: 0;
+}
+.header_box {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  height: 70px;
+  .header_left_title {
+    height: 29px;
+    margin-bottom: 10px;
+    color: #333333;
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 29px;
+  }
+  .header_right_btn {
+    .header_right_item {
+      width: 120px;
+      height: 40px;
+      margin-left: 20px;
+      border-radius: 6px;
+      &:first-child {
+        margin-left: 0;
+        background: transparent;
+      }
+    }
+  }
+}
+.content_box {
+  height: calc(100% - 70px);
+  overflow-y: auto;
+  .content_detail_box {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    .content_left_box {
+      box-sizing: border-box;
+      width: 280px;
+      height: 100%;
+      margin-right: 20px;
+      padding: 20px 0;
+      overflow-y: auto;
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0px 0px 1px 0px rgba(0, 0, 0, 0.1);
+      :global {
+        .ant-tabs {
+          display: flex;
+          height: 100%;
+          overflow: hidden;
+        }
+        .ant-tabs-nav {
+          height: 46px;
+          margin-bottom: 0;
+        }
+        .ant-tabs-nav-list {
+          width: calc(100% - 118px) !important;
+        }
+        .ant-tabs-tab {
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          width: 58px;
+        }
+        .ant-tabs-tab + .ant-tabs-tab {
+          margin-left: 60px;
+        }
+        .ant-tabs-content-holder {
+          height: calc(100% - 46px);
+          overflow-y: auto;
+          .ant-tabs-content {
+            max-height: 100%;
+            overflow-y: auto;
+          }
+        }
+      }
+    }
+
+    .content_right_box {
+      width: calc(100% - 300px);
+      height: 100%;
+      overflow: auto;
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.1);
+      .content_right_box_preview {
+        min-width: 1200px;
+      }
+    }
+  }
+}

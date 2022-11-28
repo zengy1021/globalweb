@@ -53,6 +53,13 @@
         component: './admin/Templates',
       },
       {
+        path: '/admin/template/preview',
+        name: 'preview',
+        icon: 'smile',
+        hideInMenu: true,
+        component: './admin/Templates/TemplateEdit',
+      },
+      {
         path: '/admin/menu',
         name: 'sub-page4',
         icon: 'smile',
