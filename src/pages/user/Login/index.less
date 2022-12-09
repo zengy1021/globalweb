@@ -1,50 +1,95 @@
-@import (reference) '~antd/es/style/themes/index';
-
-.container {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  overflow: auto;
-  background: @layout-body-background;
-}
-
-.lang {
+.login_content {
+  position: relative;
   width: 100%;
-  height: 40px;
-  line-height: 44px;
-  text-align: right;
-  :global(.ant-dropdown-trigger) {
-    margin-right: 24px;
-  }
+  height: 100vh;
+  background: #f4f7fc;
 }
-
-.content {
-  flex: 1;
-  padding: 32px 0;
-}
-
-@media (min-width: @screen-md-min) {
-  .container {
-    background-image: url('https://gw.alipayobjects.com/zos/rmsportal/TVYTbAXWheQpRcWDaDMu.svg');
-    background-repeat: no-repeat;
-    background-position: center 110px;
+.login_box {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-direction: row;
+  width: 1000px;
+  height: 700px;
+  margin: auto;
+  overflow: hidden;
+  border-radius: 20px;
+  .login_left_box {
+    box-sizing: border-box;
+    width: 520px;
+    height: 100%;
+    padding: 40px;
+    color: #ffffff;
+    background: url('../../../assets/imgs/login.png') center center no-repeat;
     background-size: 100%;
+    .login_left_box_header {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      height: 24px;
+      .login_left_box_header_logo {
+        width: 68px;
+        height: 30px;
+        background: url('../../../assets/imgs/echat_logo_01.svg') center center no-repeat;
+        background-size: 100%;
+      }
+      .login_left_box_header_line {
+        width: 1px;
+        height: 20px;
+        margin: 0 20px;
+        background: #fff;
+      }
+      .login_left_box_header_title {
+        font-weight: 400;
+        font-size: 14px;
+      }
+    }
+    .login_left_box_content {
+      margin-top: 60px;
+      .login_left_box_content_title {
+        height: 37px;
+        font-weight: 400;
+        font-size: 28px;
+        line-height: 40px;
+      }
+      .login_left_box_content_text {
+        height: 24px;
+        margin-top: 20px;
+        font-weight: 400;
+        font-size: 18px;
+        line-height: 26px;
+      }
+    }
   }
-
-  .content {
-    padding: 32px 0 24px;
-  }
-}
-
-.icon {
-  margin-left: 8px;
-  color: rgba(0, 0, 0, 0.2);
-  font-size: 24px;
-  vertical-align: middle;
-  cursor: pointer;
-  transition: color 0.3s;
-
-  &:hover {
-    color: @primary-color;
+  .login_right_box {
+    box-sizing: border-box;
+    width: 480px;
+    height: 100%;
+    padding: 0 60px;
+    background: #fff;
+    .login_right_header {
+      margin-top: 120px;
+      .login_right_header_title {
+        height: 37px;
+        color: #333333;
+        font-weight: 700;
+        font-size: 28px;
+        line-height: 36px;
+      }
+      .login_right_header_dec {
+        height: 24px;
+        margin-top: 20px;
+        color: #888888;
+        font-weight: 400;
+        font-size: 18px;
+        line-height: 26px;
+      }
+    }
+    .login_right_content {
+      margin-top: 60px;
+    }
   }
 }

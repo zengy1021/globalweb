@@ -24,6 +24,15 @@
   }
   .userImg {
     width: 32px;
+    height: 32px;
+    overflow: hidden;
+    vertical-align: middle;
+    border-radius: 50%;
+    :global {
+      .ant-image-img {
+        object-fit: cover;
+      }
+    }
   }
   .userName {
     margin: 0 20px 0 10px;

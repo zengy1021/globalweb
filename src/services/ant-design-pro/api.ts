@@ -1,28 +1,43 @@
 // @ts-ignore
 /* eslint-disable */
-import { request } from 'umi';
-
-/** 获取当前的用户 GET /api/currentUser */
+import { request, useModel } from 'umi';
+// import request from 'umi-request';
+// request拦截器, 改变url 或 options.
+// request.interceptors.request.use((url, options) => {
+//   let token = localStorage.getItem('echatToken');
+//   if (null === token) {
+//       token = '';
+//   }
+//   const authHeader = { Authorization: `Bearer ${token}` };
+//   return {
+//     url: url,
+//     options: { ...options, interceptors: true, headers: authHeader },
+//   };
+// });
+// const { initialState } = useModel('@@initialState');
+// const { token } = initialState;
+/** 获取当前的用户 GET /api/menu/auth */
 export async function currentUser(options?: { [key: string]: any }) {
-  return request<{
-    data: API.CurrentUser;
-  }>('/api/currentUser', {
+  return request('/api/sys/menu/auth', {
+    method: 'GET',
+    // headers: {
+    // Authorization: token,
+    // },
+    ...(options || {}),
+  });
+}
+
+/** 退出登录接口 POST /api/logout */
+export async function outLogin(options?: { [key: string]: any }) {
+  return request('/api/sys/logout', {
     method: 'GET',
     ...(options || {}),
   });
 }
 
-/** 退出登录接口 POST /api/login/outLogin */
-export async function outLogin(options?: { [key: string]: any }) {
-  return request<Record<string, any>>('/api/login/outLogin', {
-    method: 'POST',
-    ...(options || {}),
-  });
-}
-
-/** 登录接口 POST /api/login/account */
-export async function login(body: API.LoginParams, options?: { [key: string]: any }) {
-  return request<API.LoginResult>('/api/login/account', {
+/** 登录接口 POST /api/login */
+export async function login(body: any, options?: { [key: string]: any }) {
+  return request('/api/login', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -83,3 +98,14 @@ export async function removeRule(options?: { [key: string]: any }) {
     ...(options || {}),
   });
 }
+
+/** 统一上传 POST /api/sys/file/upload*/
+export async function upload(body: any, options?: { [key: string]: any }) {
+  return request('/api/file/upload', {
+    method: 'POST',
+    data: body,
+    ...(options || {}),
+  });
+}
+
+// /

@@ -27,9 +27,17 @@ const EditComps = ({ data, compsChange }: EditCompsProps) => {
   };
   return (
     <div className={style.edit_box}>
-      <ReactSortable list={currentList} setList={setCurrentList} onEnd={onEnd}>
+      <ReactSortable list={currentList} setList={setCurrentList} onEnd={onEnd} animation={200}>
         {currentList.map((item: any, index: number) => (
-          <div className={style.edit_item} key={`${item.id}${index}`}>
+          <div
+            className={style.edit_item}
+            key={`${item.id}${index}`}
+            style={{
+              [item.componentImage ? 'background' : '']: `url(${
+                item.componentImage || '@/assets/imgs/login.png'
+              }) center center / 100% no-repeat`,
+            }}
+          >
             <div className={style.edit_item_bottom_box}>
               <div className={style.edit_item_bottom_name}>{item.name}</div>
               <div className={style.edit_item_bottom_sort}>{index + 1}</div>

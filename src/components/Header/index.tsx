@@ -1,6 +1,6 @@
 import style from './index.less';
 import { UserOutlined, DownOutlined } from '@ant-design/icons';
-import type { MenuProps } from 'antd';
+import { Image, MenuProps } from 'antd';
 import { Dropdown, Space, Avatar } from 'antd';
 // import { useState } from 'react';
 import { history, useModel } from 'umi';
@@ -36,7 +36,7 @@ const loginOut = async () => {
 };
 const HeaderBox: React.FC = (props: any) => {
   const { initialState, setInitialState } = useModel('@@initialState');
-  const { currentUser } = initialState;
+  const currentUser: any = initialState?.currentUser || {};
   // useEffect(() => {
   //   console.log('initialState', currentUser);
   //   setCurrentUser({ currentUser, ...initialState?.currentUser });
@@ -61,7 +61,11 @@ const HeaderBox: React.FC = (props: any) => {
             <a onClick={(e) => e.preventDefault()}>
               <div className={style.userInfo}>
                 <div className={style.userImg}>
-                  <Avatar size={32} icon={<UserOutlined />} />
+                  {currentUser.photo ? (
+                    <Image width={'100%'} height={'100%'} src={currentUser.photo} preview={false} />
+                  ) : (
+                    <Avatar size={32} icon={<UserOutlined />} />
+                  )}
                 </div>
                 <div className={style.userName}>{currentUser.name}</div>
                 <div className={style.arrow_icon}>

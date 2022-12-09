@@ -32,20 +32,30 @@ const CompsList = ({ data, selectComp, type }: ComsListProps) => {
     }
   };
   return (
-    <div>
+    <div style={{ height: '100%', overflowY: 'auto' }}>
       <Collapse
         bordered={false}
-        defaultActiveKey={['1']}
+        // activeKey={[data[0]?.elementId]}
+        defaultActiveKey={[0]}
         expandIconPosition="end"
         // expandIcon={({ isActive }) => <IconBtn icon="" rotate={isActive ? 90 : 0} />}
         className={style.comps_type}
       >
-        {data.map((item: any) => (
-          <Panel header={<CustomHeader name={item.name} />} key={item.id}>
+        {data?.map((item: any, index: number) => (
+          <Panel header={<CustomHeader name={item.elementName} />} key={index}>
             <div className={style.comps}>
-              {item.children.map((child: any) => (
-                <div className={style.comps_item} key={child.id} onClick={() => compClick(child)}>
-                  <div className={style.comps_item_name}>{child.name}</div>
+              {item?.components?.map((child: any) => (
+                <div
+                  className={style.comps_item}
+                  key={child.componentId}
+                  onClick={() => compClick(child)}
+                  style={{
+                    [child.componentImage ? 'background' : '']: `url(${
+                      child.componentImage || '@/assets/imgs/login.png'
+                    }) center center / 100% no-repeat`,
+                  }}
+                >
+                  <div className={style.comps_item_name}>{child.componentName}</div>
                   {type == 2 && (
                     <div className={style.comps_item_hover} onClick={() => addContent(child)}>
                       <div className={style.comps_item_hover_icon}>

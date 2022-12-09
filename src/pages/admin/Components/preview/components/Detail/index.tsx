@@ -2,44 +2,7 @@ import HtmlChangeModal from '@/components/HtmlChangeModal';
 import { useState, useRef, useEffect } from 'react';
 import style from '../../index.less';
 import CompsList from '@/components/CompsList';
-const htmlComp = `<section class="feature-area-03 what-do-area-05  pt-100 pb-100">
-<div class="container">
-    <div class="row align-items-center fl-row-bt">
-        <div class="col-xxl-6 col-xl-7 col-lg-7 col-md-12">
-            <div class="feature_img_03 mb-30 wow fadeInUp2" data-wow-delay="0.2s"
-                style="visibility: visible; animation-delay: 0.2s; animation-name: fadeInUp2;">
-                <img class="img-fluid float-bob" src="/assets/img/feature/01.png" alt="" edittype="2" ondblclick="editContent">
-            </div>
-        </div>
-        <div class="col-xxl-5 offset-xxl-1 col-xl-5 col-lg-5 col-md-12">
-            <div class="cfeatures-content ml-25">
-                <div class="section-title orenge-title text-left mb-25">
-                    <h5 contenteditable="true"  onblur="blurEdit" edittype="3" ondblclick="editContent">Live Chat</h5>
-                    <h2  contenteditable="true"  onblur="blurEdit" edittype="3" ondblclick="editContent" class="mb-30">Live chat across any channel</h2>
-                    <!-- <p>Echat offers the fastest and easiest way to support your customer service, help agents stay productive, and keep the business connected.</p> -->
-                </div>
-                <ul class="features_list features_list_02 features_list_05 mb-25">
-                    <li>
-                        <h5 contenteditable="true" edittype="3"  onblur="blurEdit" ondblclick="editContent">Send product suggestions directly</h5>
-                        <p style="margin-top: 15px;" contenteditable="true" edittype="3" onblur="blurEdit" ondblclick="editContent">Echat offers the fastest and easiest way to support
-                            your customer service, and keep the business connected.</p>
-                    </li>
 
-                    <li>
-                        <h5 contenteditable="true" edittype="3" onblur="blurEdit" ondblclick="editContent">Translation of various languages</h5>
-                        <p style="margin-top: 15px;" contenteditable="true" edittype="3" ondblclick="editContent">Echat offers the fastest and easiest way to support
-                            your customer service, and keep the business connected.</p>
-                    </li>
-
-                    <!-- <li>Automatic chat routing</li> -->
-                </ul>
-                <a class="theme_btn theme_btn_06 theme_btn_bg" href="echat-live-chat.html" onblur="blurEdit" contenteditable="true" edittype="1" ondblclick="editContent">View all features
-                    <i class="fas fa-chevron-right"></i></a>
-            </div>
-        </div>
-    </div>
-</div>
-</section>`;
 const defaultModal = {
   show: false,
   type: 3,
@@ -50,8 +13,10 @@ const defaultModal = {
 };
 interface DetialProps {
   compChange: Function;
+  compsList: any;
+  compObj: any;
 }
-const Detail = ({ compChange }: DetialProps) => {
+const Detail = ({ compChange, compsList, compObj }: DetialProps) => {
   // 组件ref元素实例
   const compRef = useRef(null);
   // 当前组件html
@@ -133,50 +98,17 @@ const Detail = ({ compChange }: DetialProps) => {
   //   }
   // };
   useEffect(() => {
-    // 初始化设置当前html值
-    setCurrentCompHtml(htmlComp);
-
     // 初始化左侧菜单列表数据
-    const comps = [
-      {
-        id: '1',
-        name: '分类',
-        children: [
-          {
-            id: 'a',
-            name: '组件名称1',
-            content: '',
-          },
-          {
-            id: 'b',
-            name: '组件名称2',
-            content: '',
-          },
-        ],
-      },
-      {
-        id: '2',
-        name: '分类2',
-        children: [
-          {
-            id: 'c',
-            name: '组件名称3',
-            content: '',
-          },
-          {
-            id: 'd',
-            name: '组件名称4',
-            content: '',
-          },
-        ],
-      },
-    ];
-    setCompList(comps);
-  }, []);
+    setCompList(compsList);
+  }, [compsList]);
+  useEffect(() => {
+    // 初始化设置当前html值
+    setCurrentCompHtml(compObj.componentContent);
+  }, [compObj]);
   // 编辑弹窗保存事件
   const saveModal = (value: any) => {
-    console.log('save', value);
-    console.log(currentTarget);
+    // console.log('save', value);
+    // console.log(currentTarget);
     if (changeModalObj.type == 1) {
       //a标签
       currentTarget.innerHTML = value.content;
@@ -188,9 +120,9 @@ const Detail = ({ compChange }: DetialProps) => {
     if (changeModalObj.type == 3) {
       currentTarget.innerHTML = value.content;
     }
-    console.log(value);
+    // console.log(value);
 
-    console.log(compRef?.current?.innerHTML);
+    // console.log(compRef?.current?.innerHTML);
     //清空当前双击编辑目标对象 防止触发失去焦点事件
     setCurrentTarget(null);
     //更新当前组件需要保存对象数据 content:html
@@ -200,14 +132,14 @@ const Detail = ({ compChange }: DetialProps) => {
   };
   // 编辑弹窗删除事件
   const closeModal = () => {
-    console.log('close');
+    // console.log('close');
 
     setChangeModalObj({ ...changeModalObj, show: false });
   };
 
   // 组件列表事件
   const selectComp = (comp: any) => {
-    console.log('选择', comp);
+    // console.log('选择', comp);
     compChange(comp);
   };
   return (

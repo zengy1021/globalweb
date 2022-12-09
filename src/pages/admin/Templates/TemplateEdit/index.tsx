@@ -1,56 +1,81 @@
 import PageLayout from '@/components/PageLayout';
-import { Button } from 'antd';
+import { Button, message } from 'antd';
 import style from './index.less';
-import { history } from 'umi';
+import { history, useLocation, useParams } from 'umi';
 import Detail from './components/Detail';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { getList as getComponentsData } from '../../Components/api';
 import htmlComp from './components/Detail/htmlJson';
-const defaultTemplateObj = {
-  id: 'templateId',
-  name: '模板名称',
-  children: [
-    // {
-    //   id: 'a',
-    //   name: '组件一号',
-    //   pId: '1',
-    //   content: htmlComp,
-    // },
-    // {
-    //   id: 'b',
-    //   name: '组件二号',
-    //   pId: '1',
-    //   content: htmlComp,
-    // },
-  ],
-};
+import IconBtn from '@/components/IconBtn';
+import { getTemplate, updateItem } from '../api';
 export default function preview() {
-  const [templateObj, setTemplateObj] = useState(defaultTemplateObj);
+  // let location = useLocation();
+  const params: any = useParams();
+  // const [searchParams, setSearchParams] = useSearchParams();
+  const [templateObj, setTemplateObj] = useState<any>({});
+  const [compsList, setCompsList] = useState<any>([]);
+  useEffect(() => {
+    requestData();
+  }, [params]);
+  const requestData = async () => {
+    const res = await getComponentsData();
+    if (res.code == 200) {
+      console.log('getComponentsData', res);
+      setCompsList([...res.data]);
+    }
+    const res2 = await getTemplate({
+      templateId: params?.id,
+    });
+    if (res2.code == 200) {
+      console.log(res2);
+      setTemplateObj({ ...templateObj, ...res2.data });
+    }
+    // params?.id
+  };
   const cancel = () => {
     history.push('/admin/template');
   };
-  const save = () => {
-    console.log('save', templateObj);
+  const save = async () => {
+    // console.log('save', templateObj);
+    const res = await updateItem(templateObj);
+    if (res.code == 200) {
+      message.success('更新成功');
+      cancel();
+    }
   };
   const compChange = (compInfo: any) => {
-    console.log('选择的组件', compInfo);
+    // console.log('选择的组件', compInfo);
     // 添加到模板内容中
-    let newChildren = JSON.parse(JSON.stringify(templateObj.children)) || [];
+    let newChildren = JSON.parse(JSON.stringify(templateObj.components)) || [];
     newChildren.push(compInfo);
-    setTemplateObj({ ...templateObj, children: newChildren });
+    setTemplateObj({ ...templateObj, components: newChildren });
     // setTemplateObj({ ...templateObj, ...tempateInfo });
   };
   const childrenChange = (newChildren: any) => {
-    console.log('childrenChange', newChildren);
+    // console.log('childrenChange', newChildren);
 
-    setTemplateObj({ ...templateObj, children: newChildren });
+    setTemplateObj({ ...templateObj, components: newChildren });
   };
+  // 预览模板事件
+  const preview = () => {};
   return (
     <div>
       {/* 内容区域 */}
       <PageLayout>
         <div className={style.component_content}>
           <div className={style.header_box}>
-            <div className={style.header_left_title}>{templateObj.name || ''}</div>
+            <div className={style.header_left_title}>
+              {templateObj.templateName || ''}
+              <div className={style.header_left_icon}>
+                <IconBtn
+                  handleClick={() => preview()}
+                  icon="icon-xianxing_jiankong_1"
+                  isBtn
+                  color="#888888"
+                  size={'20px'}
+                />
+              </div>
+            </div>
             <div className={style.header_right_btn}>
               <Button type="default" className={style.header_right_item} onClick={() => cancel()}>
                 取消
@@ -66,6 +91,7 @@ export default function preview() {
               compChange={compChange}
               templateObj={templateObj}
               childrenChange={childrenChange}
+              compsList={compsList}
             />
           </div>
         </div>

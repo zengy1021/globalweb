@@ -7,6 +7,8 @@ import PremisionSelector from './PremisionSelector';
 import classNames from 'classnames';
 import IconBtn from '@/components/IconBtn';
 import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface';
+import { upload } from '@/services/ant-design-pro/api';
+import { addUser, updateUser, userInfo } from '../../api';
 
 const defaultList: any[] = [
   {
@@ -97,34 +99,113 @@ export default function Detail(props: any) {
     }
     return () => {};
   }, [premissionList]);
-
+  useEffect(() => {
+    getUserInfo();
+  }, [props.userId]);
+  const getUserInfo = async () => {
+    let res = await userInfo({ userId: props?.data?.userId || '' });
+    console.log(res);
+    if (res.code == 200) {
+      let file = [
+        {
+          uid: 'fileId',
+          name: 'fileName',
+          url: res.data.user.photo,
+        },
+      ];
+      setFileList([...file]);
+      form.setFieldValue('userName', res.data.user?.username);
+      form.setFieldValue('name', res.data.user?.name);
+      setPremissionList(res.data.menu);
+    }
+  };
   const saveForm = async () => {
     try {
       const values = await form.validateFields();
       console.log('Success:', values);
-      props.closeDrawer();
+      console.log('premissionList', premissionList);
+      console.log('photo', fileList[0]?.url);
+      let newlist: any = [];
+      premissionList.map((nItem: any) => {
+        if (nItem.menuId) {
+          newlist.push(nItem);
+        }
+      });
+      if (props.data?.userId) {
+        await updateUser({
+          user: {
+            userId: props.data?.userId,
+            username: values.userName,
+            name: values.name,
+            photo: fileList[0]?.url || '',
+          },
+          menu: newlist,
+        }).then(() => {
+          // 保存接口
+          message.success('操作成功');
+          props.closeDrawer();
+        });
+      } else {
+        await addUser({
+          user: {
+            username: values.userName,
+            name: values.name,
+            photo: fileList[0]?.url || '',
+          },
+          menu: newlist,
+        }).then(() => {
+          // 保存接口
+          message.success('操作成功');
+          props.closeDrawer();
+        });
+      }
     } catch (errorInfo: any) {
       form.scrollToField(errorInfo.errorFields[0].name[0]);
     }
   };
-  const handleUpload = () => {
+  const changeItem = (item: any) => {
+    // console.log(item);
+    let newChange = JSON.parse(JSON.stringify(premissionList));
+    let changePremisonItem = newChange.filter((fitem: any) => fitem.menuId == item.menuId)[0];
+    if (changePremisonItem) {
+      changePremisonItem.isAuth = item.isAuth;
+      changePremisonItem.children = item.children;
+      setPremissionList([...newChange]);
+    }
+  };
+  const handleUpload = (file: any) => {
     if (uploading) {
       return;
     }
     const formData = new FormData();
-    fileList.forEach((file) => {
-      formData.append('files[]', file as RcFile);
-    });
+
+    let imgSrc = fileList[0]?.url || '';
+    formData.append('file', file);
+    formData.append('src', imgSrc);
+
     setUploading(true);
+
     // You can use any AJAX library you like
-    fetch('https://www.mocky.io/v2/5cc8019d300000980a055e76', {
-      method: 'POST',
-      body: formData,
+    upload(formData, {
+      // headers: {
+      'Content-Type': 'multipart/form-data',
+      // },
     })
-      .then((res) => res.json())
-      .then(() => {
+      .then((res) => {
+        // res.json()
+        let newList = [
+          {
+            uid: 'file1',
+            url: res.data,
+            name: 'file',
+          },
+        ];
         setFileList([]);
-        message.success('upload successfully.');
+        // form.setFieldValue('photo',res.data)
+        setFileList([...newList]);
+      })
+      .then(() => {
+        // message.success('upload successfully.');
       })
       .catch(() => {
         message.error('upload failed.');
@@ -139,9 +220,11 @@ export default function Detail(props: any) {
       setFileList([]);
     },
     beforeUpload: (file) => {
-      setFileList([file]);
+      // setFileList([file]);
+      handleUpload(file);
       return false;
     },
+    showUploadList: false,
     fileList,
   };
   return (
@@ -156,11 +239,20 @@ export default function Detail(props: any) {
                   <IconBtn icon="icon-xianxing_shangchuan_1" color="#fff" size={'32px'} />
                 </div>
               </Upload>
-              <Avatar
-                size={80}
-                icon={<UserOutlined />}
-                style={{ position: 'absolute', top: 0, left: 0 }}
-              />
+              {fileList[0]?.url ? (
+                <Avatar
+                  size={80}
+                  src={fileList[0].url}
+                  shape="circle"
+                  style={{ position: 'absolute', top: 0, left: 0 }}
+                />
+              ) : (
+                <Avatar
+                  size={80}
+                  icon={<UserOutlined />}
+                  style={{ position: 'absolute', top: 0, left: 0 }}
+                />
+              )}
             </div>
           </div>
           <div className={style.detail_content_userInfo}>
@@ -199,7 +291,7 @@ export default function Detail(props: any) {
               </Form.Item>
               {/* <IconBtn icon="icon-xianxing_jiankong_1" isBtn={true} /> */}
               {/* <EyeInvisibleOutlined /> */}
-              <Form.Item
+              {/* <Form.Item
                 label="密码"
                 name="password"
                 rules={[
@@ -212,7 +304,7 @@ export default function Detail(props: any) {
                   placeholder="请输入密码"
                   iconRender={(visible) => (visible ? <EyeInvisibleOutlined /> : <EyeOutlined />)}
                 />
-              </Form.Item>
+              </Form.Item> */}
             </Form>
           </div>
         </div>
@@ -223,10 +315,10 @@ export default function Detail(props: any) {
               <div
                 key={index}
                 className={classNames('', {
-                  [`${style.detail_content_premission_item_hidden}`]: !item?.id,
+                  [`${style.detail_content_premission_item_hidden}`]: !item?.menuId,
                 })}
               >
-                <PremisionSelector item={item} />
+                <PremisionSelector item={item} changeItem={changeItem} />
               </div>
             ))}
           </div>

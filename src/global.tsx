@@ -1,10 +1,9 @@
 import { Button, message, notification } from 'antd';
 import { useIntl } from 'umi';
 import defaultSettings from '../config/defaultSettings';
-
+// import './assets/iconfont/iconfont';
 const { pwa } = defaultSettings;
 const isHttps = document.location.protocol === 'https:';
-
 const clearCache = () => {
   // remove all caches
   if (window.caches) {
@@ -90,16 +89,24 @@ if (pwa) {
   clearCache();
 }
 // 监听页面大小变化  移除样式 修复移动端显示问题
-const resizeUpdate = ()=>{
+const resizeUpdate = () => {
   let w = window.innerWidth;
-  if(w<992){
-   setTimeout(() => {
-     const leftMenu = document.getElementsByClassName('ant-pro-sider-menu')[0]
-     let newClassName = leftMenu.className.replaceAll('ant-menu-inline-collapsed','')
-     leftMenu.className = newClassName
-   }, 500);
+  if (w < 992) {
+    setImmediate(() => {
+      const leftMenu = document.getElementsByClassName('ant-pro-sider-menu')[0];
+      if (!leftMenu) {
+        return;
+      }
+      let newClassName = leftMenu.className.replaceAll('ant-menu-inline-collapsed', '');
+      leftMenu.className = newClassName;
+    });
+    // setTimeout(() => {
+    //   const leftMenu = document.getElementsByClassName('ant-pro-sider-menu')[0];
+    //   let newClassName = leftMenu.className.replaceAll('ant-menu-inline-collapsed', '');
+    //   leftMenu.className = newClassName;
+    // }, 800);
   }
-}
+};
 window.addEventListener('resize', resizeUpdate);
 resizeUpdate();
 

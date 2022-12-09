@@ -15,13 +15,17 @@ export default function IconBtn(props: IconObj) {
       {props.isBtn ? (
         <div className={style.icon_box} onClick={() => handleClick()}>
           <span
-            style={{ color: props.color || '#888', fontSize: props.size || '16px' }}
+            style={{
+              color: props.color || '#888',
+              fontSize: props.size || '16px',
+              fontWeight: 400,
+            }}
             className={`icon iconfont ${props.icon}`}
           ></span>
         </div>
       ) : (
         <span
-          style={{ color: props.color || '#888', fontSize: props.size || '16px' }}
+          style={{ color: props.color || '#888', fontSize: props.size || '16px', fontWeight: 400 }}
           className={`icon iconfont ${props.icon}`}
         ></span>
       )}

@@ -1,5 +1,17 @@
 import PageLayout from '@/components/PageLayout';
-import { Space, Table, Tag, Button, Avatar, Image, Form, Input } from 'antd';
+import {
+  Space,
+  Table,
+  Tag,
+  Button,
+  Avatar,
+  Image,
+  Form,
+  Input,
+  Dropdown,
+  MenuProps,
+  message,
+} from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import EmptyBox from '@/components/Empty';
@@ -11,11 +23,14 @@ import Detail from './components/Detail';
 import ModalBox from '@/components/Modal';
 import moment from 'moment';
 import { history } from 'umi';
+import TableBox from '@/components/TableBox';
+import { addItem, deleteItem, getList, updateItemName } from './api';
+import { NamePath } from 'antd/lib/form/interface';
 interface DataType {
   key: string;
-  name: string;
+  templateName: string;
   user: string;
-  address: any;
+  createDate: any;
   tags: string[];
 }
 interface DrawerProps {
@@ -48,23 +63,46 @@ const defaultModalObj: ModalProps = {
   message: '确认删除？',
 };
 const TableList: React.FC = () => {
-  const [form] = Form.useForm();
-  const [drawerObj, setDrawerObj] = useState(defaultDrawerObj);
-  const [modalObj, setModalObj] = useState(defaultModalObj);
-  const doClick = (record: any) => {
-    console.log(record);
-    history.push('/admin/template/preview');
-    // setDrawerObj({ ...drawerObj, show: true });
-  };
-  const remove = (item: any) => {
-    setModalObj({ ...modalObj, show: true, title: '删除', type: 2, message: '确认删除？' });
+  const dropItems: MenuProps['items'] = [
+    {
+      label: '重命名',
+      key: '1',
+    },
+    {
+      label: <span style={{ color: '#ff4d4f' }}>{'删除'}</span>,
+      key: '2',
+      // render: () => <span style={{ color: 'red' }}>{'删除'}</span>,
+    },
+  ];
+  const onDropClick: any = (obj: any, item: any) => {
+    // message.info(`Click on item ${obj.key}`);
+    // console.log(item);
+
+    switch (obj.key) {
+      case '1': // 重命名
+        setModalObj({
+          ...modalObj,
+          show: true,
+          type: 1,
+          title: '编辑模板',
+          data: item,
+        });
+        form.setFieldValue('name', item.templateName);
+        break;
+      case '2': // 删除组件 二次确认
+        remove(item);
+        break;
+      default:
+        return;
+    }
   };
   const columns: ColumnsType<DataType> = [
     {
       title: '名称',
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'templateName',
+      key: 'templateName',
       width: 235,
+      fixed: 'left',
     },
     {
       title: '创建者',
@@ -80,14 +118,15 @@ const TableList: React.FC = () => {
     },
     {
       title: '创建时间 ',
-      dataIndex: 'address',
-      key: 'address',
+      dataIndex: 'createDate',
+      key: 'createDate',
       width: 235,
       render: (text) => <>{moment(text).format('YYYY-MM-DD')}</>,
     },
     {
       title: '操作',
       key: 'action',
+      fixed: 'right',
       width: 235,
       render: (_, record) => (
         <Space size="middle">
@@ -98,40 +137,95 @@ const TableList: React.FC = () => {
             isBtn={true}
             handleClick={() => doClick(record)}
           />
-          <IconBtn
+          <Dropdown
+            autoFocus
+            menu={{ items: dropItems, onClick: (obj: any) => onDropClick(obj, record) }}
+            overlayClassName={'dropMinWidth'}
+            trigger={['click']}
+          >
+            <a
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                e.nativeEvent.stopImmediatePropagation();
+              }}
+            >
+              <IconBtn
+                icon="icon-xianxing_gengduo_1"
+                size={'20px'}
+                color="#888888"
+                isBtn={true}
+                // handleClick={() => remove(record)}
+              />
+            </a>
+          </Dropdown>
+          {/* <IconBtn
             icon="icon-xianxing_shanchu_1"
             size={'20px'}
             color="#888888"
             isBtn={true}
             handleClick={() => remove(record)}
-          />
+          /> */}
         </Space>
       ),
     },
   ];
-  const data: DataType[] = [
-    {
-      key: '1',
-      name: 'John Brown',
-      user: '查三',
-      address: new Date(),
-      tags: ['nice', 'developer'],
-    },
-    {
-      key: '2',
-      name: 'Jim Green',
-      user: '查三',
-      address: new Date(),
-      tags: ['loser'],
-    },
-    {
-      key: '3',
-      name: 'Joe Black',
-      user: '查三',
-      address: new Date(),
-      tags: ['cool', 'teacher'],
-    },
-  ];
+  const data: DataType[] = [];
+  const [form] = Form.useForm();
+  const [listData, setListData] = useState(data);
+  const [drawerObj, setDrawerObj] = useState(defaultDrawerObj);
+  const [modalObj, setModalObj] = useState(defaultModalObj);
+  const [pageOption, setPageOption] = useState({
+    current: 1,
+    pageSize: 10,
+    total: data.length,
+    pageOption: [10, 20, 30, 40, 50],
+  });
+  useEffect(() => {
+    getTemplateList();
+  }, [pageOption.current, pageOption.pageSize]);
+  const getTemplateList = async (reloadPage?: any) => {
+    let params = {
+      pageNum: reloadPage || pageOption.current,
+      pageSize: pageOption.pageSize,
+    };
+    const res: any = await getList(params);
+    if (res.code == 200) {
+      setPageOption({
+        ...pageOption,
+        current: res.data.pageNum,
+        total: res.data.total,
+      });
+      if (res.data.total > 0 && res.data.pageNum > Math.ceil(res.data.total / res.data.pageSize)) {
+        getTemplateList(Math.ceil(res.data.total / res.data.pageSize));
+        return;
+      }
+      res.data.list.forEach((item: any) => {
+        item.key = item.templateId;
+      });
+      setListData([...res.data.list]);
+    }
+  };
+  const onPageChange = (page: number, pageSize: number) => {
+    // console.log(page, pageSize);
+    setPageOption({ ...pageOption, current: page, pageSize });
+  };
+  const doClick = (record: any) => {
+    console.log(record);
+    history.push(`/admin/template/preview/${record.templateId}`);
+    // setDrawerObj({ ...drawerObj, show: true });
+  };
+  const remove = (item: any) => {
+    setModalObj({
+      ...modalObj,
+      show: true,
+      title: '删除',
+      type: 2,
+      message: '确认删除？',
+      data: item,
+    });
+  };
+
   const closeDrawer = () => {
     setDrawerObj({ ...drawerObj, show: false });
   };
@@ -139,15 +233,52 @@ const TableList: React.FC = () => {
     setDrawerObj({ ...drawerObj, show: true });
   };
   const addNewTempalte = () => {
-    setModalObj({ ...modalObj, show: true, type: 1, data: {} });
+    form.setFieldValue('name', '');
+    setModalObj({ ...modalObj, show: true, type: 1, data: {}, title: '新增模板' });
   };
   const closeModal = () => {
     setModalObj({ ...modalObj, show: false, data: {} });
   };
-  const modalSave = () => {
+  const modalSave = async () => {
     // 弹窗保存事件
-    closeModal();
-    console.log('保存');
+
+    console.log('保存', modalObj);
+    if (modalObj.type == 1) {
+      form.validateFields().then(async (nameList: NamePath[]) => {
+        if (modalObj.data?.templateId) {
+          //编辑名称
+          const res = await updateItemName({
+            templateId: modalObj.data.templateId,
+            templateName: nameList['name'],
+          });
+          if (res.code == 200) {
+            message.success('编辑成功');
+            getTemplateList();
+            closeModal();
+          }
+        } else {
+          // 新增
+          const res = await addItem({
+            templateName: nameList['name'],
+          });
+          if (res.code == 200) {
+            message.success('新增成功');
+            getTemplateList();
+            closeModal();
+          }
+        }
+      });
+    } else if (modalObj.type == 2) {
+      //删除
+      const res = await deleteItem({
+        templateId: modalObj.data?.templateId,
+      });
+      if (res.code == 200) {
+        message.success('删除成功');
+        getTemplateList();
+        closeModal();
+      }
+    }
   };
   // const dataEmpty: DataType[] = [];
   return (
@@ -172,7 +303,19 @@ const TableList: React.FC = () => {
           </div>
           {/* 表格 */}
           <div className={style.table_content}>
-            {data.length ? <Table columns={columns} dataSource={data} /> : <EmptyBox />}
+            {listData.length ? (
+              <TableBox
+                columns={columns}
+                data={listData}
+                pagination={{
+                  onChange: onPageChange,
+                  showSizeChanger: true,
+                  ...pageOption,
+                }}
+              />
+            ) : (
+              <EmptyBox />
+            )}
           </div>
         </div>
       </PageLayout>

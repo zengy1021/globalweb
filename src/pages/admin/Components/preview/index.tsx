@@ -1,12 +1,38 @@
 import PageLayout from '@/components/PageLayout';
 import { Button } from 'antd';
 import style from './index.less';
-import { history } from 'umi';
+import { history, useParams } from 'umi';
 import Detail from './components/Detail';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { getComponent, getList } from '../api';
 
 export default function preview() {
-  const [compObj, setCompObj] = useState({});
+  const params: any = useParams();
+  const [compsList, setCompList] = useState<any>([]);
+  const [compObj, setCompObj] = useState<any>({});
+  useEffect(() => {
+    requestData();
+  }, [params]);
+  const requestData = async () => {
+    const res = await getList();
+    if (res.code == 200) {
+      // console.log('getComponentsData', res);
+      setCompList([...res.data]);
+    }
+    const res2 = await getComponent({
+      componentId: params?.id,
+    });
+    if (res2.code == 200) {
+      // console.log(res2);
+      setCompObj({
+        ...compObj,
+        componentName: res2.data.name,
+        componentId: res2.data.id,
+        componentContent: res2.data.content,
+      });
+    }
+    // params?.id
+  };
   const cancel = () => {
     history.push('/admin/component');
   };
@@ -19,7 +45,7 @@ export default function preview() {
       <PageLayout>
         <div className={style.component_content}>
           <div className={style.header_box}>
-            <div className={style.header_left_title}>{compObj.name}</div>
+            <div className={style.header_left_title}>{compObj?.componentName || ''}</div>
             <div className={style.header_right_btn}>
               <Button type="default" className={style.header_right_item} onClick={() => cancel()}>
                 返回
@@ -31,7 +57,7 @@ export default function preview() {
           </div>
           {/* 组件内容区域 */}
           <div className={style.content_box}>
-            <Detail compChange={compChange} />
+            <Detail compChange={compChange} compsList={compsList} compObj={compObj} />
           </div>
         </div>
       </PageLayout>

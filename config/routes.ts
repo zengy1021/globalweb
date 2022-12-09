@@ -4,7 +4,7 @@
     layout: false,
     routes: [
       {
-        name: 'login',
+        name: '登录',
         path: '/user/login',
         component: './user/Login',
       },
@@ -13,34 +13,28 @@
       },
     ],
   },
-  // {
-  //   path: '/welcome',
-  //   name: 'welcome',
-  //   icon: 'smile',
-  //   component: './Welcome',
-  // },
   // ##########管理--start
   {
     path: '/admin',
-    name: 'admin',
-    icon: 'crown',
-    hideInBreadcrumb: true, // 在面包屑中隐藏
+    name: '管理',
+    icon: 'icon-xianxing_shezhi_1',
+    // hideInBreadcrumb: true, // 在面包屑中隐藏
     // access: 'canAdmin',
     routes: [
       {
         path: '/admin/user',
-        name: 'sub-page1',
+        name: '用户',
         icon: 'smile',
         component: './admin/User',
       },
       {
         path: '/admin/component',
-        name: 'sub-page2',
+        name: '组件',
         icon: 'smile',
         component: './admin/Components',
       },
       {
-        path: '/admin/component/preview',
+        path: '/admin/component/preview/:id',
         name: 'preview',
         icon: 'smile',
         hideInMenu: true,
@@ -48,12 +42,12 @@
       },
       {
         path: '/admin/template',
-        name: 'sub-page3',
+        name: '模板',
         icon: 'smile',
         component: './admin/Templates',
       },
       {
-        path: '/admin/template/preview',
+        path: '/admin/template/preview/:id',
         name: 'preview',
         icon: 'smile',
         hideInMenu: true,
@@ -61,13 +55,19 @@
       },
       {
         path: '/admin/menu',
-        name: 'sub-page4',
+        name: '菜单',
         icon: 'smile',
         component: './admin/Menu',
       },
       {
+        path: '/admin/type',
+        name: '分组',
+        icon: 'smile',
+        component: './admin/Types',
+      },
+      {
         path: '/admin/approve',
-        name: 'sub-page5',
+        name: '审批',
         icon: 'smile',
         component: './admin/Approve',
       },
@@ -77,45 +77,81 @@
     ],
   },
   // ##########管理--end
-
+  // ##########内容--start
   {
     path: '/content',
-    name: 'content',
-    icon: 'crown',
+    name: '内容',
+    icon: 'icon-xianxing_caidan_2',
     // access: 'canAdmin',
     routes: [
       {
-        path: '/content/product',
-        name: 'sub-page1',
-        icon: 'smile',
-        component: './content/Product',
+        path: '/content/6869DBF26F',
+        name: 'Product',
+        icon: '',
+        component: './content',
       },
       {
-        path: '/content/solutions',
-        name: 'sub-page2',
-        icon: 'smile',
-        component: './content/Solutions',
+        path: '/content/209D26BA96',
+        name: 'Solutions',
+        icon: '',
+        component: './content',
       },
+      {
+        path: '/content/18E0AD8D07',
+        name: 'Pricing',
+        icon: '',
+        component: './content',
+      },
+      {
+        path: '/content/7D8D8C2726',
+        name: 'Services',
+        icon: '',
+        component: './content',
+      },
+      {
+        path: '/content/72CA99C8A2',
+        name: 'Resources',
+        icon: '',
+        component: './content',
+      },
+
+      {
+        hideInMenu: true,
+        path: '/content/:path/edit/:id',
+        name: 'Edit',
+        icon: '',
+        component: './content/ContentEdit',
+      },
+      // {
+      //   path: '/content/edit/:path',
+      //   name: 'Product',
+      //   icon: '',
+      //   hideInMenu: true,
+      //   component: './content/ContentEdit',
+      // },
       {
         component: './404',
       },
     ],
   },
+  // ##########内容--end
+
+  // ##########功能--start
   {
     path: '/other',
-    name: 'other',
-    icon: 'crown',
+    name: '功能',
+    icon: 'icon-xianxing_biaoqian',
     // access: 'canAdmin',
     routes: [
       {
         path: '/other/other',
-        name: 'other',
+        name: '功能',
         icon: 'smile',
         component: './other/Other',
       },
       {
-        path: '/other/solutions',
-        name: 'content',
+        path: '/other/content',
+        name: '内容',
         icon: 'smile',
         component: './other/Content',
       },
@@ -124,16 +160,18 @@
       },
     ],
   },
+  // ##########功能--end
+  // ##########文章--start
   {
     path: '/article',
-    name: 'article',
-    icon: 'crown',
+    name: '文章',
+    icon: 'icon-xianxing_tishiyu_1',
     // access: 'canAdmin',
     routes: [
       {
         path: '/article/list',
-        name: 'article',
-        icon: 'smile',
+        name: '列表',
+        icon: '',
         component: './article/ArticleList',
       },
       {
@@ -141,12 +179,7 @@
       },
     ],
   },
-  // {
-  //   name: 'list.table-list',
-  //   icon: 'table',
-  //   path: '/list',
-  //   component: './TableList',
-  // },
+  // ##########文章--end
   {
     path: '/',
     component: './Welcome',
@@ -155,3 +188,4 @@
     component: './404',
   },
 ];
+// 后台数据增加菜单，此处也必须得添加菜单

@@ -1,396 +1,560 @@
-import { addRule, removeRule, rule, updateRule } from '@/services/ant-design-pro/api';
-import { PlusOutlined } from '@ant-design/icons';
-import type { ActionType, ProColumns, ProDescriptionsItemProps } from '@ant-design/pro-components';
+import PageLayout from '@/components/PageLayout';
 import {
-  FooterToolbar,
-  ModalForm,
-  PageContainer,
-  ProDescriptions,
-  ProFormText,
-  ProFormTextArea,
-  ProTable,
-} from '@ant-design/pro-components';
-import { Button, Drawer, Input, message } from 'antd';
-import React, { useRef, useState } from 'react';
-import { FormattedMessage, useIntl } from 'umi';
-import type { FormValueType } from './components/UpdateForm';
-import UpdateForm from './components/UpdateForm';
-
-/**
- * @en-US Add node
- * @zh-CN 添加节点
- * @param fields
- */
-const handleAdd = async (fields: API.RuleListItem) => {
-  const hide = message.loading('正在添加');
-  try {
-    await addRule({ ...fields });
-    hide();
-    message.success('Added successfully');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('Adding failed, please try again!');
-    return false;
-  }
+  Space,
+  Table,
+  Tag,
+  Button,
+  Avatar,
+  Image,
+  Form,
+  Input,
+  Row,
+  Col,
+  DatePicker,
+  Tooltip,
+  Dropdown,
+  MenuProps,
+  message,
+} from 'antd';
+import { UserOutlined } from '@ant-design/icons';
+import type { ColumnsType } from 'antd/es/table';
+import EmptyBox from '@/components/Empty';
+import style from './index.less';
+import IconBtn from '@/components/IconBtn';
+import DrawerBox from '@/components/Drawer';
+import { useState, useEffect } from 'react';
+import Detail from './components/Detail';
+import ModalBox from '@/components/Modal';
+import moment from 'moment';
+import TypesMenu from './components/TypesMenu';
+import TableBox from '@/components/TableBox';
+import TagBox from '@/components/TagBox';
+import { getList, getTypeList, removeType } from './api';
+import { addType } from './api';
+const { RangePicker } = DatePicker;
+interface DataType {
+  key: string;
+  name: string;
+  remark: string;
+  status: string;
+  user: string;
+  address: any;
+  tags: string[];
+  version: string;
+}
+interface DrawerProps {
+  show: boolean; // 显示||收起
+  width?: number; //宽度
+  placement?: string; //抽屉的方向  top | right | bottom | left
+  mask?: boolean; // 是否展示蒙层
+  maskClosable?: boolean; //点击蒙层是否关闭
+  children?: any;
+  data?: any;
+}
+const defaultDrawerObj: DrawerProps = {
+  show: false,
+  data: {},
 };
 
-/**
- * @en-US Update node
- * @zh-CN 更新节点
- *
- * @param fields
- */
-const handleUpdate = async (fields: FormValueType) => {
-  const hide = message.loading('Configuring');
-  try {
-    await updateRule({
-      name: fields.name,
-      desc: fields.desc,
-      key: fields.key,
-    });
-    hide();
-
-    message.success('Configuration is successful');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('Configuration failed, please try again!');
-    return false;
-  }
+interface ModalProps {
+  show: boolean; //展示|隐藏
+  width?: number; // 弹窗宽度
+  children?: any; //插槽内容
+  title: any; // 标题
+  data?: any; //编辑数据
+  type?: number; //弹窗类型 1：表单 2：删除
+  message?: string; // 自定义弹窗内容
+}
+const defaultModalObj: ModalProps = {
+  show: false,
+  title: '模板',
+  width: 440,
+  type: 1,
+  data: {},
+  message: '确认删除？',
 };
-
-/**
- *  Delete node
- * @zh-CN 删除节点
- *
- * @param selectedRows
- */
-const handleRemove = async (selectedRows: API.RuleListItem[]) => {
-  const hide = message.loading('正在删除');
-  if (!selectedRows) return true;
-  try {
-    await removeRule({
-      key: selectedRows.map((row) => row.key),
-    });
-    hide();
-    message.success('Deleted successfully and will refresh soon');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('Delete failed, please try again');
-    return false;
-  }
-};
-
+const defaultUserInfo: any = {};
 const TableList: React.FC = () => {
-  /**
-   * @en-US Pop-up window of new window
-   * @zh-CN 新建窗口的弹窗
-   *  */
-  const [createModalVisible, handleModalVisible] = useState<boolean>(false);
-  /**
-   * @en-US The pop-up window of the distribution update window
-   * @zh-CN 分布更新窗口的弹窗
-   * */
-  const [updateModalVisible, handleUpdateModalVisible] = useState<boolean>(false);
-
-  const [showDetail, setShowDetail] = useState<boolean>(false);
-
-  const actionRef = useRef<ActionType>();
-  const [currentRow, setCurrentRow] = useState<API.RuleListItem>();
-  const [selectedRowsState, setSelectedRows] = useState<API.RuleListItem[]>([]);
-
-  /**
-   * @en-US International configuration
-   * @zh-CN 国际化配置
-   * */
-  const intl = useIntl();
-
-  const columns: ProColumns<API.RuleListItem>[] = [
+  const dropItems: MenuProps['items'] = [
     {
-      title: (
-        <FormattedMessage
-          id="pages.searchTable.updateForm.ruleName.nameLabel"
-          defaultMessage="Rule name"
-        />
-      ),
-      dataIndex: 'name',
-      tip: 'The rule name is the unique key',
-      render: (dom, entity) => {
-        return (
-          <a
-            onClick={() => {
-              setCurrentRow(entity);
-              setShowDetail(true);
-            }}
-          >
-            {dom}
-          </a>
-        );
-      },
+      label: '提交',
+      key: '1',
     },
     {
-      title: <FormattedMessage id="pages.searchTable.titleDesc" defaultMessage="Description" />,
-      dataIndex: 'desc',
-      valueType: 'textarea',
-    },
-    {
-      title: (
-        <FormattedMessage
-          id="pages.searchTable.titleCallNo"
-          defaultMessage="Number of service calls"
-        />
-      ),
-      dataIndex: 'callNo',
-      sorter: true,
-      hideInForm: true,
-      renderText: (val: string) =>
-        `${val}${intl.formatMessage({
-          id: 'pages.searchTable.tenThousand',
-          defaultMessage: ' 万 ',
-        })}`,
-    },
-    {
-      title: <FormattedMessage id="pages.searchTable.titleStatus" defaultMessage="Status" />,
-      dataIndex: 'status',
-      hideInForm: true,
-      valueEnum: {
-        0: {
-          text: (
-            <FormattedMessage
-              id="pages.searchTable.nameStatus.default"
-              defaultMessage="Shut down"
-            />
-          ),
-          status: 'Default',
-        },
-        1: {
-          text: (
-            <FormattedMessage id="pages.searchTable.nameStatus.running" defaultMessage="Running" />
-          ),
-          status: 'Processing',
-        },
-        2: {
-          text: (
-            <FormattedMessage id="pages.searchTable.nameStatus.online" defaultMessage="Online" />
-          ),
-          status: 'Success',
-        },
-        3: {
-          text: (
-            <FormattedMessage
-              id="pages.searchTable.nameStatus.abnormal"
-              defaultMessage="Abnormal"
-            />
-          ),
-          status: 'Error',
-        },
-      },
-    },
-    {
-      title: (
-        <FormattedMessage
-          id="pages.searchTable.titleUpdatedAt"
-          defaultMessage="Last scheduled time"
-        />
-      ),
-      sorter: true,
-      dataIndex: 'updatedAt',
-      valueType: 'dateTime',
-      renderFormItem: (item, { defaultRender, ...rest }, form) => {
-        const status = form.getFieldValue('status');
-        if (`${status}` === '0') {
-          return false;
-        }
-        if (`${status}` === '3') {
-          return (
-            <Input
-              {...rest}
-              placeholder={intl.formatMessage({
-                id: 'pages.searchTable.exception',
-                defaultMessage: 'Please enter the reason for the exception!',
-              })}
-            />
-          );
-        }
-        return defaultRender(item);
-      },
-    },
-    {
-      title: <FormattedMessage id="pages.searchTable.titleOption" defaultMessage="Operating" />,
-      dataIndex: 'option',
-      valueType: 'option',
-      render: (_, record) => [
-        <a
-          key="config"
-          onClick={() => {
-            handleUpdateModalVisible(true);
-            setCurrentRow(record);
-          }}
-        >
-          <FormattedMessage id="pages.searchTable.config" defaultMessage="Configuration" />
-        </a>,
-        <a key="subscribeAlert" href="https://procomponents.ant.design/">
-          <FormattedMessage
-            id="pages.searchTable.subscribeAlert"
-            defaultMessage="Subscribe to alerts"
-          />
-        </a>,
-      ],
+      label: <span style={{ color: '#ff4d4f' }}>{'删除'}</span>,
+      key: '2',
+      // render: () => <span style={{ color: 'red' }}>{'删除'}</span>,
     },
   ];
+  const onDropClick: any = (obj: any, item: any) => {
+    // message.info(`Click on item ${obj.key}`);
+    // console.log(item);
 
-  return (
-    <PageContainer>
-      <ProTable<API.RuleListItem, API.PageParams>
-        headerTitle={intl.formatMessage({
-          id: 'pages.searchTable.title',
-          defaultMessage: 'Enquiry form',
-        })}
-        actionRef={actionRef}
-        rowKey="key"
-        search={{
-          labelWidth: 120,
-        }}
-        toolBarRender={() => [
-          <Button
-            type="primary"
-            key="primary"
-            onClick={() => {
-              handleModalVisible(true);
-            }}
-          >
-            <PlusOutlined /> <FormattedMessage id="pages.searchTable.new" defaultMessage="New" />
-          </Button>,
-        ]}
-        request={rule}
-        columns={columns}
-        rowSelection={{
-          onChange: (_, selectedRows) => {
-            setSelectedRows(selectedRows);
-          },
-        }}
-      />
-      {selectedRowsState?.length > 0 && (
-        <FooterToolbar
-          extra={
-            <div>
-              <FormattedMessage id="pages.searchTable.chosen" defaultMessage="Chosen" />{' '}
-              <a style={{ fontWeight: 600 }}>{selectedRowsState.length}</a>{' '}
-              <FormattedMessage id="pages.searchTable.item" defaultMessage="项" />
-              &nbsp;&nbsp;
-              <span>
-                <FormattedMessage
-                  id="pages.searchTable.totalServiceCalls"
-                  defaultMessage="Total number of service calls"
-                />{' '}
-                {selectedRowsState.reduce((pre, item) => pre + item.callNo!, 0)}{' '}
-                <FormattedMessage id="pages.searchTable.tenThousand" defaultMessage="万" />
-              </span>
-            </div>
-          }
-        >
-          <Button
-            onClick={async () => {
-              await handleRemove(selectedRowsState);
-              setSelectedRows([]);
-              actionRef.current?.reloadAndRest?.();
-            }}
-          >
-            <FormattedMessage
-              id="pages.searchTable.batchDeletion"
-              defaultMessage="Batch deletion"
-            />
-          </Button>
-          <Button type="primary">
-            <FormattedMessage
-              id="pages.searchTable.batchApproval"
-              defaultMessage="Batch approval"
-            />
-          </Button>
-        </FooterToolbar>
-      )}
-      <ModalForm
-        title={intl.formatMessage({
-          id: 'pages.searchTable.createForm.newRule',
-          defaultMessage: 'New rule',
-        })}
-        width="400px"
-        visible={createModalVisible}
-        onVisibleChange={handleModalVisible}
-        onFinish={async (value) => {
-          const success = await handleAdd(value as API.RuleListItem);
-          if (success) {
-            handleModalVisible(false);
-            if (actionRef.current) {
-              actionRef.current.reload();
-            }
-          }
-        }}
-      >
-        <ProFormText
-          rules={[
-            {
-              required: true,
-              message: (
-                <FormattedMessage
-                  id="pages.searchTable.ruleName"
-                  defaultMessage="Rule name is required"
-                />
-              ),
-            },
-          ]}
-          width="md"
-          name="name"
-        />
-        <ProFormTextArea width="md" name="desc" />
-      </ModalForm>
-      <UpdateForm
-        onSubmit={async (value) => {
-          const success = await handleUpdate(value);
-          if (success) {
-            handleUpdateModalVisible(false);
-            setCurrentRow(undefined);
-            if (actionRef.current) {
-              actionRef.current.reload();
-            }
-          }
-        }}
-        onCancel={() => {
-          handleUpdateModalVisible(false);
-          if (!showDetail) {
-            setCurrentRow(undefined);
-          }
-        }}
-        updateModalVisible={updateModalVisible}
-        values={currentRow || {}}
-      />
-
-      <Drawer
-        width={600}
-        open={showDetail}
-        onClose={() => {
-          setCurrentRow(undefined);
-          setShowDetail(false);
-        }}
-        closable={false}
-      >
-        {currentRow?.name && (
-          <ProDescriptions<API.RuleListItem>
-            column={2}
-            title={currentRow?.name}
-            request={async () => ({
-              data: currentRow || {},
-            })}
-            params={{
-              id: currentRow?.name,
-            }}
-            columns={columns as ProDescriptionsItemProps<API.RuleListItem>[]}
+    switch (obj.key) {
+      case '1': // 提交
+        // commit(item);
+        break;
+      case '2': // 删除组件 二次确认
+        remove(item);
+        break;
+      default:
+        return;
+    }
+  };
+  const columns: ColumnsType<any> = [
+    {
+      title: '标题',
+      dataIndex: 'title',
+      key: 'title',
+      fixed: 'left',
+      width: 157,
+      ellipsis: {
+        showTitle: false,
+      },
+      render: (address: any) => (
+        <Tooltip placement="topLeft" title={address}>
+          {address}
+        </Tooltip>
+      ),
+    },
+    {
+      title: '分类',
+      dataIndex: 'elementId',
+      key: 'elementId',
+      width: 157,
+      ellipsis: {
+        showTitle: false,
+      },
+      render: (address: any) => (
+        <Tooltip placement="topLeft" title={address}>
+          {address}
+        </Tooltip>
+      ),
+    },
+    {
+      title: '描述',
+      dataIndex: 'description',
+      key: 'description',
+      width: 157,
+      ellipsis: {
+        showTitle: false,
+      },
+      render: (address: any) => (
+        <Tooltip placement="topLeft" title={address}>
+          {address}
+        </Tooltip>
+      ),
+    },
+    // {
+    //   title: '最近更新人',
+    //   dataIndex: 'user',
+    //   key: 'user',
+    //   width: 157,
+    //   render: (text) => (
+    //     <>
+    //       <Avatar size={32} icon={<UserOutlined />} />
+    //       <span style={{ marginLeft: '10px' }}>{text}</span>
+    //     </>
+    //   ),
+    // },
+    {
+      title: '创建时间 ',
+      dataIndex: 'createDate',
+      key: 'createDate',
+      width: 157,
+      ellipsis: {
+        showTitle: false,
+      },
+      render: (address: any) => (
+        <Tooltip placement="topLeft" title={address}>
+          {moment(address).format('YYYY-MM-DD')}
+        </Tooltip>
+      ),
+    },
+    {
+      title: '关键词',
+      dataIndex: 'keywords',
+      key: 'keywords',
+      width: 157,
+      ellipsis: {
+        showTitle: false,
+      },
+      render: (address: any) => (
+        <Tooltip placement="topLeft" title={address}>
+          {address}
+        </Tooltip>
+      ),
+    },
+    {
+      title: '状态',
+      dataIndex: 'status',
+      key: 'status',
+      width: 157,
+      render: (text, _: any) => <TagBox item={{ text: _.statusStr, type: text }}></TagBox>,
+    },
+    {
+      title: '操作',
+      key: 'action',
+      width: 157,
+      fixed: 'right',
+      render: (_, record) => (
+        <Space size="middle">
+          <IconBtn
+            icon="icon-mianxing_bianji_1"
+            size={'20px'}
+            color="#888888"
+            isBtn={true}
+            handleClick={() => doClick(record)}
           />
+          <Dropdown
+            autoFocus
+            menu={{ items: dropItems, onClick: (obj: any) => onDropClick(obj, record) }}
+            overlayClassName={'dropMinWidth'}
+            trigger={['click']}
+          >
+            <a
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                e.nativeEvent.stopImmediatePropagation();
+              }}
+            >
+              <IconBtn
+                icon="icon-xianxing_gengduo_1"
+                size={'20px'}
+                color="#888888"
+                isBtn={true}
+                // handleClick={() => remove(record)}
+              />
+            </a>
+          </Dropdown>
+        </Space>
+      ),
+    },
+  ];
+  const data: any = [];
+  const [typeList, setTypeList] = useState<any>([]);
+  const [form] = Form.useForm();
+  const [form2] = Form.useForm();
+  const [drawerObj, setDrawerObj] = useState(defaultDrawerObj);
+  const [modalObj, setModalObj] = useState(defaultModalObj);
+  const [curType, setCurType] = useState<any>({});
+  const [listData, setListData] = useState(data);
+  const [pageOption, setPageOption] = useState({
+    current: 1,
+    pageSize: 10,
+    total: data.length,
+    pageOption: [10, 20, 30, 40, 50],
+  });
+  useEffect(() => {
+    requestData();
+  }, []);
+  useEffect(() => {
+    console.log('curType', curType);
+
+    setPageOption({
+      ...{
+        current: 1,
+        pageSize: 10,
+        total: data.length,
+        pageOption: [10, 20, 30, 40, 50],
+      },
+    });
+    getPageList();
+  }, [curType]);
+
+  useEffect(() => {
+    getPageList();
+  }, [pageOption.current, pageOption.pageSize]);
+
+  const requestData = async () => {
+    // 获取文章分类列表
+    const res = await getTypeList();
+    if (res.code == 200) {
+      console.log('getTypeList', res.data);
+      res.data.forEach((item: any) => {
+        item.id = item.elementId;
+        item.name = item.elementName;
+      });
+      res.data.unshift({
+        name: '全部',
+        id: 'all',
+      });
+      setTypeList([...res.data]);
+      const isCurrentTypeLoad = res.data.filter((item: any) => item.id == curType.id)[0];
+      if (!isCurrentTypeLoad) {
+        setCurType({ ...(res.data[0] || {}) });
+      }
+    }
+  };
+  const getPageList = async (reloadPage?: any) => {
+    let curElementId = curType.id == 'all' ? '' : curType.id;
+    let params = {
+      pageNum: reloadPage || pageOption.current,
+      pageSize: pageOption.pageSize,
+      elementId: curElementId || '',
+    };
+    const res: any = await getList(params);
+    if (res.code == 200) {
+      setPageOption({
+        ...pageOption,
+        current: res.data.pageNum,
+        total: res.data.total,
+      });
+      if (res.data.total > 0 && res.data.pageNum > Math.ceil(res.data.total / res.data.pageSize)) {
+        getPageList(Math.ceil(res.data.total / res.data.pageSize));
+        return;
+      }
+      res.data.list.forEach((item: any) => {
+        item.key = item.userId;
+      });
+      setListData([...res.data.list]);
+    }
+  };
+  const changeCurType = (value: any) => {
+    setCurType({ ...value });
+    //  请求文章列表
+  };
+  const onPageChange = (page: number, pageSize: number) => {
+    console.log(page, pageSize);
+    setPageOption({ ...pageOption, current: page, pageSize });
+  };
+  const searchHandle = (values: any) => {
+    console.log('查询', values);
+    console.log(
+      values.date[0].format('YYYY-MM-DD 00:00:00'),
+      values.date[1].format('YYYY-MM-DD 23:59:59'),
+    );
+  };
+  const doClick = (record: any) => {
+    setDrawerObj({ ...drawerObj, show: true, data: record });
+  };
+  const remove = (item: any) => {
+    setModalObj({
+      ...modalObj,
+      show: true,
+      title: '删除',
+      type: 3,
+      message: '确认删除？',
+      data: item,
+    });
+  };
+  const closeDrawer = () => {
+    setDrawerObj({ ...drawerObj, show: false });
+  };
+  const addNew = () => {
+    setDrawerObj({ ...drawerObj, show: true, data: {} });
+  };
+  const closeModal = () => {
+    setModalObj({ ...modalObj, show: false, data: {} });
+  };
+  // 弹窗保存回调
+  const modalSave = async () => {
+    // 弹窗保存事件
+    console.log('保存2', modalObj);
+    if (modalObj.type == 1) {
+      //编辑 新增
+      const res = await addType({
+        name: form2.getFieldsValue().name,
+      });
+      if (res.code == 200) {
+        message.success('新增成功');
+        requestData();
+      }
+    } else if (modalObj.type == 2) {
+      //删除
+      const res = await removeType({
+        id: modalObj.data.id,
+      });
+      if (res.code == 200) {
+        message.success('删除成功');
+        requestData();
+      }
+    } else if (modalObj.type == 3) {
+      //删除 文章列表表格删除
+    }
+
+    // 调用接口
+    closeModal();
+  };
+  // 分类触发方法
+  const typeHandler = (type: number, obj: any) => {
+    switch (type) {
+      case 1: // 新增弹窗
+        form2.setFieldValue('name', '');
+        setModalObj({
+          ...modalObj,
+          show: true,
+          title: '新增分类',
+          type: 1,
+          message: '',
+          data: {},
+        });
+        break;
+      case 2: // 编辑
+        //更新分类列表
+        requestData();
+        break;
+      case 3: // 删除弹窗
+        setModalObj({
+          ...modalObj,
+          show: true,
+          title: '删除分类',
+          type: 2,
+          message: '确认删除？',
+          data: obj,
+        });
+        break;
+      default:
+        return;
+    }
+  };
+  return (
+    <div>
+      {/* 内容区域 */}
+      <PageLayout>
+        <div className={style.article_content}>
+          <div className={style.left_menu}>
+            {/* openType={openType}  */}
+            <TypesMenu
+              typeHandler={typeHandler}
+              data={typeList}
+              curType={curType}
+              changeCurType={changeCurType}
+            />
+          </div>
+          <div className={style.right_table}>
+            <div className={style.header_box}>
+              <div className={style.header_left_box}>
+                <Form
+                  form={form}
+                  colon={false}
+                  initialValues={defaultUserInfo}
+                  size={'large'}
+                  scrollToFirstError={true}
+                  requiredMark={false}
+                  onFinish={searchHandle}
+                  validateMessages={{ required: '${label}不能为空' }}
+                >
+                  <div className={style.row_box}>
+                    <div className={style.col_box}>
+                      <Form.Item
+                        label=""
+                        name="date"
+                        rules={[
+                          {
+                            required: false,
+                          },
+                        ]}
+                      >
+                        <RangePicker />
+                      </Form.Item>
+                    </div>
+                    <div className={style.col_box}>
+                      <Form.Item
+                        label=""
+                        name="keywords"
+                        rules={[
+                          {
+                            required: false,
+                          },
+                        ]}
+                      >
+                        <Input placeholder="请输入关键词" />
+                      </Form.Item>
+                    </div>
+                    <div className={style.col_box}>
+                      <Form.Item
+                        label=""
+                        name="other"
+                        rules={[
+                          {
+                            required: false,
+                          },
+                        ]}
+                      >
+                        <Input placeholder="标题、描述" />
+                      </Form.Item>
+                    </div>
+                    <div className={style.col_box}>
+                      <Button
+                        style={{
+                          width: '80px',
+                          height: '40px',
+                          borderRadius: '6px',
+                          fontSize: '14px',
+                        }}
+                        type="primary"
+                        htmlType="submit"
+                      >
+                        搜索
+                      </Button>
+                    </div>
+                  </div>
+                </Form>
+              </div>
+              <div className={style.header_right_btn}>
+                <Button
+                  style={{ width: '120px', height: '40px', borderRadius: '6px' }}
+                  onClick={() => addNew()}
+                >
+                  添加文章
+                </Button>
+              </div>
+            </div>
+            {/* 表格 */}
+            <div className={style.table_content}>
+              {listData.length ? (
+                <TableBox
+                  columns={columns}
+                  data={listData}
+                  pagination={{
+                    onChange: onPageChange,
+                    showSizeChanger: true,
+                    ...pageOption,
+                  }}
+                />
+              ) : (
+                <EmptyBox />
+              )}
+            </div>
+          </div>
+        </div>
+      </PageLayout>
+      {/* 滑窗区域 */}
+      <DrawerBox show={drawerObj.show}>
+        <Detail closeDrawer={closeDrawer} data={drawerObj.data} />
+      </DrawerBox>
+      {/* 弹窗区域 */}
+      <ModalBox {...modalObj} close={() => closeModal()} save={modalSave}>
+        {modalObj.type == 1 ? (
+          <Form
+            form={form2}
+            labelCol={{ span: 24 }}
+            wrapperCol={{ span: 24 }}
+            layout="vertical"
+            size={'large'}
+            scrollToFirstError={true}
+            requiredMark={false}
+            validateMessages={{ required: '${label}不能为空' }}
+          >
+            <Form.Item
+              label="名称"
+              name="name"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+          </Form>
+        ) : (
+          <div>{modalObj.message}</div>
         )}
-      </Drawer>
-    </PageContainer>
+      </ModalBox>
+    </div>
   );
 };
 

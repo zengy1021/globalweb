@@ -230,6 +230,11 @@ ol {
 .ant-menu {
   color: #333;
 }
+.ant-menu-submenu-title .anticon {
+  margin-top: -4px !important;
+  font-size: 20px;
+}
+
 // #####菜单-----end
 // #####表格-----start
 .ant-table-thead
@@ -245,6 +250,21 @@ ol {
   font-size: 14px;
   background-color: #f8f8f8;
   border-color: #eaeaea;
+}
+.ant-table-wrapper {
+  height: 100%;
+  .ant-spin-nested-loading {
+    height: 100%;
+    .ant-spin-container {
+      height: 100%;
+      .ant-table {
+        height: calc(100% - 64px);
+        .ant-table-container {
+          height: 100%;
+        }
+      }
+    }
+  }
 }
 // #####表格-----end
 
@@ -266,6 +286,9 @@ ol {
   border-color: #ddd;
   border-radius: 6px;
 }
+textarea.ant-input {
+  max-height: 100%;
+}
 .ant-form-item {
   margin-bottom: 20px;
 }
@@ -274,6 +297,9 @@ ol {
 }
 .ant-select-selector {
   border-radius: 6px !important;
+}
+.ant-picker-range {
+  border-radius: 6px;
 }
 // #####表单-----end
 // #####下拉菜单-----start
@@ -284,6 +310,17 @@ ol {
 }
 // #####下拉菜单-----end
 .anticon {
-  margin-top: -3px !important;
+  margin-top: -15% !important;
   vertical-align: middle;
+}
+
+.ant-message .anticon {
+  margin-top: -4px !important;
+}
+
+.ant-collapse-header .anticon {
+  top: 0;
+  bottom: 0;
+  margin: auto !important;
+  transform: translateY(-30%) !important  ;
 }

@@ -17,8 +17,9 @@ interface DetialProps {
   compChange: Function;
   templateObj: any;
   childrenChange: Function;
+  compsList: any;
 }
-const Detail = ({ compChange, templateObj, childrenChange }: DetialProps) => {
+const Detail = ({ compChange, templateObj, childrenChange, compsList }: DetialProps) => {
   // 组件ref元素实例
   const [refArr, setRefArr] = useState<React.RefObject<HTMLDivElement>[]>([]);
   // 创建一个新的数组来存储ref
@@ -88,75 +89,23 @@ const Detail = ({ compChange, templateObj, childrenChange }: DetialProps) => {
       if (!refArr[index].current || currentTarget) {
         return;
       }
-      let newChildren = JSON.parse(JSON.stringify(templateObj.children));
+      let newChildren = JSON.parse(JSON.stringify(templateObj.components));
       newChildren[index].content = refArr[index]?.current?.innerHTML;
       childrenChange(newChildren);
     }
   };
   useEffect(() => {
     // 初始化设置当前模板值 ref创建
-    templateObj.children.forEach((item: any, index: number) => {
+    templateObj.components?.forEach((item: any, index: number) => {
       arr.push(React.createRef<HTMLDivElement>());
     });
     setRefArr(arr);
     // 初始化左侧菜单列表数据
-    const comps = [
-      {
-        id: '1',
-        name: '分类',
-        children: [
-          {
-            id: 'a',
-            name: '组件名称1',
-            content: htmlComp,
-          },
-          {
-            id: 'b',
-            name: '组件名称2',
-            content: htmlComp,
-          },
-          {
-            id: 'a1',
-            name: '组件名称5',
-            content: htmlComp,
-          },
-          {
-            id: 'b1',
-            name: '组件名称6',
-            content: htmlComp,
-          },
-        ],
-      },
-      {
-        id: '2',
-        name: '分类2',
-        children: [
-          {
-            id: 'c',
-            name: '组件名称3',
-            content: htmlComp,
-          },
-          {
-            id: 'd',
-            name: '组件名称4',
-            content: htmlComp,
-          },
-          {
-            id: 'c1',
-            name: '组件名称7',
-            content: htmlComp,
-          },
-          {
-            id: 'd1',
-            name: '组件名称8',
-            content: htmlComp,
-          },
-        ],
-      },
-    ];
-    setCompList(comps);
-    setCurrentComps(templateObj.children);
+    setCurrentComps(templateObj.components);
   }, [templateObj]);
+  useEffect(() => {
+    setCompList([...compsList]);
+  }, [compsList]);
   // 编辑弹窗保存事件
   const saveModal = (value: any) => {
     console.log('save', value);
@@ -175,7 +124,7 @@ const Detail = ({ compChange, templateObj, childrenChange }: DetialProps) => {
     //清空当前双击编辑目标对象 防止触发失去焦点事件
     setCurrentTarget(null);
     //更新当前组件需要保存对象数据 content:html
-    let newChildren = JSON.parse(JSON.stringify(templateObj.children));
+    let newChildren = JSON.parse(JSON.stringify(templateObj.components));
     newChildren[currentRefIndex].content = refArr[currentRefIndex]?.current?.innerHTML;
     childrenChange(newChildren);
     //关闭组件内容编辑弹窗
@@ -218,7 +167,7 @@ const Detail = ({ compChange, templateObj, childrenChange }: DetialProps) => {
       <div className={style.content_right_box}>
         {/* 头部html */}
         {/* style={{ pointerEvents: 'none' }} */}
-        {templateObj.children.map((item: any, index: number) => {
+        {templateObj.components?.map((item: any, index: number) => {
           return (
             <div
               key={index}
@@ -226,7 +175,7 @@ const Detail = ({ compChange, templateObj, childrenChange }: DetialProps) => {
               onDoubleClick={(e) => eventListenDB(e, index)}
               onBlur={(e) => eventListenBlur(e, index)}
               dangerouslySetInnerHTML={{
-                __html: item.content,
+                __html: item.componentContent,
               }}
               ref={refArr?.[index]}
             />

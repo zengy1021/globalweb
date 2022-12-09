@@ -1,0 +1,115 @@
+.type_box {
+  height: 100%;
+  padding: 20px 0;
+  overflow-y: auto;
+  background: #ffffff;
+}
+.type_item_box {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  height: 48px;
+  padding: 0 10px 0px 20px;
+  &:hover {
+    background: #e6f7ff;
+    cursor: pointer;
+    .type_item_icon {
+      background: #1890ff !important;
+    }
+    .type_item_label_text {
+      color: #1890ff !important;
+    }
+    .type_item_label_delete {
+      visibility: visible !important;
+    }
+  }
+  .type_item_icon_box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    .type_item_icon {
+      width: 6px;
+      height: 6px;
+      background: #cccccc;
+      border-radius: 50%;
+    }
+  }
+  .type_item_label_box {
+    width: calc(100% - 30px);
+    margin-left: 10px;
+
+    .type_item_label {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      .type_item_label_text {
+        width: calc(100% - 42px);
+        overflow: hidden;
+        color: #323232;
+        font-weight: 700;
+        font-size: 14px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+      .type_item_label_delete {
+        width: 32px;
+        height: 32px;
+        visibility: hidden;
+      }
+    }
+    .type_item_label_input {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      width: 100%;
+      :global {
+        .ant-form-item {
+          margin: 0;
+          font-size: 14px;
+          .ant-form-item-explain-error {
+            font-size: 0;
+          }
+        }
+      }
+      .type_item_label_input_cancel {
+        padding-left: 10px;
+        color: #ccc;
+        font-weight: 400;
+        font-size: 12px;
+        &:hover {
+          color: #1890ff;
+        }
+      }
+    }
+  }
+}
+.currentSelect {
+  background: #e6f7ff !important;
+  .type_item_icon {
+    background: #1890ff !important;
+  }
+  .type_item_label_text {
+    color: #1890ff !important;
+  }
+}
+.add_box {
+  .type_item_label_box {
+    color: #888888;
+  }
+  &:hover {
+    .type_item_icon_box {
+      color: #1890ff !important;
+      > span {
+        color: #1890ff !important;
+      }
+    }
+    .type_item_label_box {
+      color: #1890ff !important;
+    }
+  }
+}

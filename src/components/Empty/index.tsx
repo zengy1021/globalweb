@@ -1,7 +1,7 @@
 import { Empty } from 'antd';
 import style from './index.less';
 import NullImg from '@/assets/imgs/null.svg';
-export default function EmptyBox() {
+export default function EmptyBox(props: any) {
   return (
     <div className={style.empty_box}>
       <Empty
@@ -11,6 +11,7 @@ export default function EmptyBox() {
         }}
         description={<span className={style.empty_description}>暂无内容</span>}
       />
+      {props.children}
     </div>
   );
 }

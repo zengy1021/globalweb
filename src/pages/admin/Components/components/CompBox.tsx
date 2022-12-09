@@ -5,6 +5,7 @@ import type { MenuProps } from 'antd';
 import classNames from 'classnames';
 import style from '../index.less';
 import { history } from 'umi';
+
 import { useState } from 'react';
 import ModalBox from '@/components/Modal';
 export default function CompBox(props: any) {
@@ -45,11 +46,11 @@ export default function CompBox(props: any) {
     },
   ];
   const goComps = (item: any) => {
-    console.log(item);
-    history.push('/admin/component/preview');
+    // console.log(item);
+    history.push(`/admin/component/preview/${item.componentId}`);
   };
   const onDropClick: any = (obj: any, item: any) => {
-    message.info(`Click on item ${obj.key}`);
+    // message.info(`Click on item ${obj.key}`);
     switch (obj.key) {
       case '1': // 编辑组件 打开新增|编辑页面
         props.openEdit(item);
@@ -58,7 +59,8 @@ export default function CompBox(props: any) {
         props.openEdit(item, 'name');
         break;
       case '3': // 删除组件 二次确认
-        remove(item);
+        props.openEdit(item, 'remove');
+        // remove(item);
         break;
       default:
         return;
@@ -69,18 +71,18 @@ export default function CompBox(props: any) {
   };
   const modalSave = () => {
     // 弹窗保存事件
-    closeModal();
     console.log('保存');
+    closeModal();
   };
-  const remove = (item: any) => {
-    setModalObj({ ...modalObj, show: true, title: '删除' });
-  };
+  // const remove = (item: any) => {
+  //   setModalObj({ ...modalObj, show: true, title: '删除' });
+  // };
   return (
     <div style={{ height: '100%' }}>
       {props.list.map((item: any, index: number) => (
         <div className={style.comp_box} key={index}>
           <div className={style.comp_box_header}>
-            <div className={style.comp_box_header_title}>{item.name}</div>
+            <div className={style.comp_box_header_title}>{item.elementName}</div>
             <div
               className={style.comp_box_header_btn}
               onClick={(e) => {
@@ -109,23 +111,23 @@ export default function CompBox(props: any) {
             </div>
           </div>
           <div className={style.comp_box_content}>
-            {!item.children.length ? (
+            {!item?.components?.length ? (
               <EmptyBox></EmptyBox>
             ) : (
               <div className={style.comp_list_box}>
-                {item.children.map((child: any, cIndex: number) => (
+                {item.components.map((child: any, cIndex: number) => (
                   <div
                     className={classNames(`${style.comp_item}`, {
-                      [`${style.comp_item_hidden}`]: !child.id,
+                      [`${style.comp_item_hidden}`]: !child.componentId,
                     })}
                     key={cIndex}
                     onClick={() => goComps(child)}
                   >
                     <div className={style.comp_item_img}>
-                      <Image width={'100%'} src={child.bgImg} preview={false}></Image>
+                      <Image width={'100%'} src={child.componentImage} preview={false}></Image>
                     </div>
                     <div className={style.comp_item_footer}>
-                      <div className={style.comp_item_footer_name}>{child.name}</div>
+                      <div className={style.comp_item_footer_name}>{child.componentName}</div>
                       <div
                         className={style.comp_item_footer_btn}
                         onClick={(e) => {
