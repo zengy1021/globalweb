@@ -14,7 +14,7 @@ const DrawerBox = ({
   width = 1000,
   placement = 'right',
   mask = true,
-  maskClosable = false,
+  maskClosable = true,
   children,
 }: DrawerProps) => {
   const [open, setOpen] = useState(show);
@@ -22,12 +22,13 @@ const DrawerBox = ({
     setOpen(show);
     return () => {};
   }, [show]);
-
   return (
     <Drawer
       width={width}
       placement="right"
       open={open}
+      maskClosable={true}
+      keyboard={true}
       bodyStyle={{ padding: 0 }}
       destroyOnClose={true} // 关闭时销毁元素
       headerStyle={{ display: 'none' }} // 隐藏头部 自定义布局内容

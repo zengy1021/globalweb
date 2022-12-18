@@ -199,29 +199,7 @@ const TableList: React.FC = () => {
       ),
     },
   ];
-  const data: any[] = [
-    {
-      key: '1',
-      name: 'John Brown',
-      age: 32,
-      address: new Date(),
-      tags: ['nice', 'developer'],
-    },
-    {
-      key: '2',
-      name: 'Jim Green',
-      age: 42,
-      address: new Date(),
-      tags: ['loser'],
-    },
-    {
-      key: '3',
-      name: 'Joe Black',
-      age: 32,
-      address: new Date(),
-      tags: ['cool', 'teacher'],
-    },
-  ];
+  const data: any[] = [];
   const [listData, setListData] = useState(data);
   const [drawerObj, setDrawerObj] = useState(defaultDrawerObj);
   const [modalObj, setModalObj] = useState(defaultModalObj);

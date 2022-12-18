@@ -1,9 +1,20 @@
-.user_content {
+.approve_content {
   box-sizing: border-box;
   height: 100%;
-  padding: 0 40px 20px 40px;
+  padding: 30px 40px 30px 40px;
   background: #fff;
   border-radius: 10px;
+  :global {
+    .ant-tabs {
+      height: 100%;
+      .ant-tabs-content {
+        height: 100%;
+        .ant-tabs-tabpane {
+          height: 100%;
+        }
+      }
+    }
+  }
 }
 .header_box {
   display: flex;

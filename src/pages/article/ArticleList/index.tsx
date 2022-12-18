@@ -1,22 +1,16 @@
 import PageLayout from '@/components/PageLayout';
 import {
   Space,
-  Table,
-  Tag,
   Button,
-  Avatar,
-  Image,
   Form,
   Input,
-  Row,
-  Col,
   DatePicker,
   Tooltip,
   Dropdown,
   MenuProps,
   message,
+  Select,
 } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import EmptyBox from '@/components/Empty';
 import style from './index.less';
@@ -29,19 +23,9 @@ import moment from 'moment';
 import TypesMenu from './components/TypesMenu';
 import TableBox from '@/components/TableBox';
 import TagBox from '@/components/TagBox';
-import { getList, getTypeList, removeType } from './api';
+import { commitApprove, getList, getTypeList, removeItem, removeType } from './api';
 import { addType } from './api';
 const { RangePicker } = DatePicker;
-interface DataType {
-  key: string;
-  name: string;
-  remark: string;
-  status: string;
-  user: string;
-  address: any;
-  tags: string[];
-  version: string;
-}
 interface DrawerProps {
   show: boolean; // 显示||收起
   width?: number; //宽度
@@ -76,13 +60,95 @@ const defaultModalObj: ModalProps = {
 const defaultUserInfo: any = {};
 const TableList: React.FC = () => {
   const dropItems: MenuProps['items'] = [
+    // {
+    //   label: '预览',
+    //   key: '4',
+    //   disabled: false,
+    // },
     {
       label: '提交',
       key: '1',
+      disabled: false,
+    },
+    {
+      label: <span style={{ color: '#ffc53d' }}>{'回退'}</span>,
+      key: '3',
+      disabled: false,
     },
     {
       label: <span style={{ color: '#ff4d4f' }}>{'删除'}</span>,
       key: '2',
+      disabled: false,
+      // render: () => <span style={{ color: 'red' }}>{'删除'}</span>,
+    },
+  ];
+
+  const dropItems2: MenuProps['items'] = [
+    // {
+    //   label: '预览',
+    //   key: '4',
+    //   disabled: false,
+    // },
+    {
+      label: <span style={{ color: '#cccccc' }}>{'提交'}</span>,
+      key: '1',
+      disabled: true,
+    },
+    {
+      label: <span style={{ color: '#cccccc' }}>{'回退'}</span>,
+      key: '3',
+      disabled: true,
+    },
+    {
+      label: <span style={{ color: '#cccccc' }}>{'删除'}</span>,
+      key: '2',
+      disabled: true,
+      // render: () => <span style={{ color: 'red' }}>{'删除'}</span>,
+    },
+  ];
+  const dropItems3: MenuProps['items'] = [
+    // {
+    //   label: '预览',
+    //   key: '4',
+    //   disabled: false,
+    // },
+    {
+      label: <span style={{ color: '#cccccc' }}>{'提交'}</span>,
+      key: '1',
+      disabled: true,
+    },
+    {
+      label: <span style={{ color: '#cccccc' }}>{'回退'}</span>,
+      key: '3',
+      disabled: true,
+    },
+    {
+      label: <span style={{ color: '#ff4d4f' }}>{'删除'}</span>,
+      key: '2',
+      disabled: false,
+      // render: () => <span style={{ color: 'red' }}>{'删除'}</span>,
+    },
+  ];
+  const dropItems4: MenuProps['items'] = [
+    // {
+    //   label: '预览',
+    //   key: '4',
+    //   disabled: false,
+    // },
+    {
+      label: '提交',
+      key: '1',
+      disabled: false,
+    },
+    {
+      label: <span style={{ color: '#cccccc' }}>{'回退'}</span>,
+      key: '3',
+      disabled: true,
+    },
+    {
+      label: <span style={{ color: '#ff4d4f' }}>{'删除'}</span>,
+      key: '2',
+      disabled: false,
       // render: () => <span style={{ color: 'red' }}>{'删除'}</span>,
     },
   ];
@@ -93,6 +159,7 @@ const TableList: React.FC = () => {
     switch (obj.key) {
       case '1': // 提交
         // commit(item);
+        commit(item);
         break;
       case '2': // 删除组件 二次确认
         remove(item);
@@ -119,8 +186,8 @@ const TableList: React.FC = () => {
     },
     {
       title: '分类',
-      dataIndex: 'elementId',
-      key: 'elementId',
+      dataIndex: 'elementName',
+      key: 'elementName',
       width: 157,
       ellipsis: {
         showTitle: false,
@@ -199,16 +266,39 @@ const TableList: React.FC = () => {
       fixed: 'right',
       render: (_, record) => (
         <Space size="middle">
-          <IconBtn
-            icon="icon-mianxing_bianji_1"
-            size={'20px'}
-            color="#888888"
-            isBtn={true}
-            handleClick={() => doClick(record)}
-          />
+          {record.status != 2 ? (
+            <IconBtn
+              icon="icon-mianxing_bianji_1"
+              size={'20px'}
+              color="#888888"
+              isBtn={true}
+              handleClick={() => doClick(record)}
+            />
+          ) : (
+            <IconBtn
+              icon="icon-mianxing_bianji_1"
+              size={'20px'}
+              color="#cccccc"
+              isBtn={true}
+              disabled
+              // handleClick={() => doClick(record)}
+            />
+          )}
+
           <Dropdown
             autoFocus
-            menu={{ items: dropItems, onClick: (obj: any) => onDropClick(obj, record) }}
+            menu={{
+              items: [1, 4].includes(record.status)
+                ? record.hasPro
+                  ? dropItems
+                  : dropItems4
+                : [2].includes(record.status)
+                ? dropItems2
+                : [3].includes(record.status)
+                ? dropItems3
+                : [],
+              onClick: (obj: any) => onDropClick(obj, record),
+            }}
             overlayClassName={'dropMinWidth'}
             trigger={['click']}
           >
@@ -261,6 +351,12 @@ const TableList: React.FC = () => {
       },
     });
     getPageList();
+    const defaultSearch = {
+      keywords: [],
+      description: '',
+      date: [],
+    };
+    form.setFieldsValue(defaultSearch);
   }, [curType]);
 
   useEffect(() => {
@@ -287,12 +383,13 @@ const TableList: React.FC = () => {
       }
     }
   };
-  const getPageList = async (reloadPage?: any) => {
+  const getPageList = async (reloadPage?: any, searchParams?: any) => {
     let curElementId = curType.id == 'all' ? '' : curType.id;
     let params = {
       pageNum: reloadPage || pageOption.current,
       pageSize: pageOption.pageSize,
       elementId: curElementId || '',
+      ...searchParams,
     };
     const res: any = await getList(params);
     if (res.code == 200) {
@@ -302,11 +399,11 @@ const TableList: React.FC = () => {
         total: res.data.total,
       });
       if (res.data.total > 0 && res.data.pageNum > Math.ceil(res.data.total / res.data.pageSize)) {
-        getPageList(Math.ceil(res.data.total / res.data.pageSize));
+        getPageList(Math.ceil(res.data.total / res.data.pageSize), searchParams);
         return;
       }
       res.data.list.forEach((item: any) => {
-        item.key = item.userId;
+        item.key = item.contentId;
       });
       setListData([...res.data.list]);
     }
@@ -320,11 +417,18 @@ const TableList: React.FC = () => {
     setPageOption({ ...pageOption, current: page, pageSize });
   };
   const searchHandle = (values: any) => {
-    console.log('查询', values);
-    console.log(
-      values.date[0].format('YYYY-MM-DD 00:00:00'),
-      values.date[1].format('YYYY-MM-DD 23:59:59'),
-    );
+    // console.log('查询', values);
+    // console.log(
+    //   values.date[0].format('YYYY-MM-DD 00:00:00'),
+    //   values.date[1].format('YYYY-MM-DD 23:59:59'),
+    // );
+    const search = {
+      keywords: values.keywords.join(','),
+      description: values.description,
+      startDate: values.date[0].format('YYYY-MM-DD 00:00:00'),
+      endDate: values.date[1].format('YYYY-MM-DD 23:59:59'),
+    };
+    getPageList(null, search);
   };
   const doClick = (record: any) => {
     setDrawerObj({ ...drawerObj, show: true, data: record });
@@ -339,8 +443,20 @@ const TableList: React.FC = () => {
       data: item,
     });
   };
+  const commit = (item: any) => {
+    setModalObj({
+      ...modalObj,
+      show: true,
+      title: '提交',
+      type: 4,
+      message: '是否提交？',
+      data: item,
+    });
+  };
   const closeDrawer = () => {
     setDrawerObj({ ...drawerObj, show: false });
+    requestData();
+    getPageList();
   };
   const addNew = () => {
     setDrawerObj({ ...drawerObj, show: true, data: {} });
@@ -372,6 +488,24 @@ const TableList: React.FC = () => {
       }
     } else if (modalObj.type == 3) {
       //删除 文章列表表格删除
+      const res = await removeItem({
+        contentId: modalObj.data.contentId,
+      });
+      if (res.code == 200) {
+        message.success('删除成功');
+        getPageList();
+        requestData();
+      }
+    } else if (modalObj.type == 4) {
+      //文章列表表格 提交审批
+      const res = await commitApprove({
+        contentId: modalObj.data.contentId,
+      });
+      if (res.code == 200) {
+        message.success('提交成功');
+        getPageList();
+        requestData();
+      }
     }
 
     // 调用接口
@@ -460,13 +594,13 @@ const TableList: React.FC = () => {
                           },
                         ]}
                       >
-                        <Input placeholder="请输入关键词" />
+                        <Select mode="tags" placeholder="请输入关键词" />
                       </Form.Item>
                     </div>
                     <div className={style.col_box}>
                       <Form.Item
                         label=""
-                        name="other"
+                        name="description"
                         rules={[
                           {
                             required: false,
@@ -522,7 +656,7 @@ const TableList: React.FC = () => {
         </div>
       </PageLayout>
       {/* 滑窗区域 */}
-      <DrawerBox show={drawerObj.show}>
+      <DrawerBox show={drawerObj.show} closeDrawer={closeDrawer}>
         <Detail closeDrawer={closeDrawer} data={drawerObj.data} />
       </DrawerBox>
       {/* 弹窗区域 */}

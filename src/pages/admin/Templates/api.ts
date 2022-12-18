@@ -1,6 +1,9 @@
 // @ts-ignore
 /* eslint-disable */
 import { request } from 'umi';
+// const defaultProxy = process.env.NODE_ENV == 'development' ? '/api' : '';
+const defaultProxy = process.env.NODE_ENV == 'development' ? '/api' : '/owm';
+
 /** 获取模板列表 */
 export async function getList(
   params: {
@@ -12,7 +15,7 @@ export async function getList(
   },
   options?: { [key: string]: any },
 ) {
-  return request('/api/global/template/pageList', {
+  return request(defaultProxy + '/global/template/pageList', {
     method: 'GET',
     params,
     ...(options || {}),
@@ -21,7 +24,7 @@ export async function getList(
 
 /** 新增模板 POST */
 export async function addItem(data?: any, options?: { [key: string]: any }) {
-  return request('/api/global/template', {
+  return request(defaultProxy + '/global/template', {
     method: 'POST',
     data: data,
     ...(options || {}),
@@ -29,7 +32,7 @@ export async function addItem(data?: any, options?: { [key: string]: any }) {
 }
 /** 更新模板名称 DELETE */
 export async function updateItemName(data?: any, options?: { [key: string]: any }) {
-  return request('/api/global/template', {
+  return request(defaultProxy + '/global/template', {
     method: 'PUT',
     data: data,
     ...(options || {}),
@@ -37,7 +40,7 @@ export async function updateItemName(data?: any, options?: { [key: string]: any 
 }
 /** 更新模板 DELETE */
 export async function updateItem(data?: any, options?: { [key: string]: any }) {
-  return request('/api/global/template/deep', {
+  return request(defaultProxy + '/global/template/deep', {
     method: 'PUT',
     data: data,
     ...(options || {}),
@@ -46,7 +49,7 @@ export async function updateItem(data?: any, options?: { [key: string]: any }) {
 
 /** 删除模板 DELETE  */
 export async function deleteItem(data?: any, options?: { [key: string]: any }) {
-  return request('/api/global/template', {
+  return request(defaultProxy + '/global/template', {
     method: 'DELETE',
     data: data,
     ...(options || {}),
@@ -58,7 +61,7 @@ export async function getTemplate(
   params: { templateId: string },
   options?: { [key: string]: any },
 ) {
-  return request(`/api/global/template`, {
+  return request(defaultProxy + `/global/template`, {
     method: 'GET',
     params,
     ...(options || {}),

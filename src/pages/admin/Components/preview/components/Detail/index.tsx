@@ -145,7 +145,7 @@ const Detail = ({ compChange, compsList, compObj }: DetialProps) => {
   return (
     <div className={style.content_detail_box}>
       <div className={style.content_left_box}>
-        <CompsList data={compList} type={1} selectComp={selectComp} />
+        <CompsList data={compList} type={1} selectComp={selectComp} currentComp={compObj} />
       </div>
       <div className={style.content_right_box}>
         <div

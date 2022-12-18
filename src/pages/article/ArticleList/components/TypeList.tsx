@@ -78,7 +78,7 @@ const TypeList = ({ data, currentType, typeChange }: TypeList) => {
                       className={style.type_item_label_delete}
                       onClick={(e) => removeItem(item, e)}
                     >
-                      <IconBtn icon="icon-xianxing_shanchu_1" size={'22px'} isBtn color="#1890FF" />
+                      <IconBtn icon="icon-xianxing_shanchu_1" size={'22px'} isBtn color="#888888" />
                     </div>
                   )}
                 </div>

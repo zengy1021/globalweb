@@ -50,8 +50,8 @@ export default function Detail(props: any) {
   const saveForm = async () => {
     try {
       const values = await form.validateFields();
-      console.log('Success:', values);
-      console.log('editValue', editValue);
+      // console.log('Success:', values);
+      // console.log('editValue', editValue);
       let parmas: any = {
         name: values.name,
         elementName: values.elementName,
@@ -105,8 +105,8 @@ export default function Detail(props: any) {
     console.log('Received values of form: ', values);
   };
   const checkFile = (_: any, value: any, validaName: string) => {
-    console.log('_', _);
-    console.log('value', value);
+    // console.log('_', _);
+    // console.log('value', value);
     if (value) {
       return Promise.resolve();
     }

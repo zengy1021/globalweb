@@ -29,7 +29,7 @@ import { NamePath } from 'antd/lib/form/interface';
 interface DataType {
   key: string;
   templateName: string;
-  user: string;
+  creator: string;
   createDate: any;
   tags: string[];
 }
@@ -96,7 +96,7 @@ const TableList: React.FC = () => {
         return;
     }
   };
-  const columns: ColumnsType<DataType> = [
+  const columns: ColumnsType<any> = [
     {
       title: '名称',
       dataIndex: 'templateName',
@@ -106,13 +106,17 @@ const TableList: React.FC = () => {
     },
     {
       title: '创建者',
-      dataIndex: 'user',
-      key: 'user',
+      dataIndex: 'creator',
+      key: 'creator',
       width: 235,
       render: (text) => (
         <>
-          <Avatar size={32} icon={<UserOutlined />} />
-          <span style={{ marginLeft: '10px' }}>{text}</span>
+          {text?.photo ? (
+            <Avatar size={32} src={text.photo} shape="circle" />
+          ) : (
+            <Avatar size={32} icon={<UserOutlined />} shape="circle" />
+          )}
+          <span style={{ marginLeft: '10px' }}>{text?.name}</span>
         </>
       ),
     },

@@ -29,6 +29,7 @@ export default function preview() {
         componentName: res2.data.name,
         componentId: res2.data.id,
         componentContent: res2.data.content,
+        elementId: res2.data.elementId,
       });
     }
     // params?.id

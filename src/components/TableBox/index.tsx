@@ -54,8 +54,8 @@ const EditableCell: React.FC<EditableCellProps> = ({
   const toggleEdit = () => {
     setEditing(!editing);
     form.setFieldsValue({ [dataIndex]: record[dataIndex] });
-    console.log('edit：dataIndex', dataIndex);
-    console.log('edit：record', record[dataIndex]);
+    // console.log('edit：dataIndex', dataIndex);
+    // console.log('edit：record', record[dataIndex]);
   };
 
   const save = async () => {
@@ -64,8 +64,12 @@ const EditableCell: React.FC<EditableCellProps> = ({
 
       toggleEdit();
       handleSave({ ...record, ...values });
-      console.log('save：record', record);
-      console.log('save：values', values);
+      // console.log('save：record', record);
+      // console.log('save：values', values);
+      // const newRecord = {
+      //   ...record,
+      //   ...values
+      // }
     } catch (errInfo) {
       console.log('Save failed:', errInfo);
     }
@@ -131,6 +135,7 @@ const TableBox = ({ columns, data, pagination, EditChange = () => {} }: TableBox
       ...item,
       ...row,
     });
+    EditChange(row);
     setDataSource(newData);
   };
   const components = {

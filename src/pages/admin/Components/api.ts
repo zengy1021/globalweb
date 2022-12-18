@@ -1,9 +1,11 @@
 // @ts-ignore
 /* eslint-disable */
+const defaultProxy = process.env.NODE_ENV == 'development' ? '/api' : '/owm';
+
 import { request } from 'umi';
 /** 获取组件列表 */
 export async function getList(options?: { [key: string]: any }) {
-  return request('/api/global/component/element/list', {
+  return request(defaultProxy + '/global/component/element/list', {
     method: 'GET',
     ...(options || {}),
   });
@@ -11,7 +13,7 @@ export async function getList(options?: { [key: string]: any }) {
 
 /** 新增组件类型 DELETE */
 export async function addItem(data?: any, options?: { [key: string]: any }) {
-  return request('/api/global/component/element', {
+  return request(defaultProxy + '/global/component/element', {
     method: 'POST',
     data: data,
     ...(options || {}),
@@ -19,7 +21,7 @@ export async function addItem(data?: any, options?: { [key: string]: any }) {
 }
 /** 更新组件类型 DELETE */
 export async function updateItem(data?: any, options?: { [key: string]: any }) {
-  return request('/api/global/component/element', {
+  return request(defaultProxy + '/global/component/element', {
     method: 'PUT',
     data: data,
     ...(options || {}),
@@ -28,7 +30,7 @@ export async function updateItem(data?: any, options?: { [key: string]: any }) {
 
 /** 删除组件类型 DELETE  */
 export async function deleteItem(data?: any, options?: { [key: string]: any }) {
-  return request('/api/global/component/element', {
+  return request(defaultProxy + '/global/component/element', {
     method: 'DELETE',
     data: data,
     ...(options || {}),
@@ -40,7 +42,7 @@ export async function getComponent(
   params: { componentId: string },
   options?: { [key: string]: any },
 ) {
-  return request(`/api/global/component`, {
+  return request(defaultProxy + `/global/component`, {
     method: 'GET',
     params,
     ...(options || {}),
@@ -49,7 +51,7 @@ export async function getComponent(
 
 /** 新增组件 POST */
 export async function addComponent(data?: any, options?: { [key: string]: any }) {
-  return request('/api/global/component', {
+  return request(defaultProxy + '/global/component', {
     method: 'POST',
     data: data,
     ...(options || {}),
@@ -57,7 +59,7 @@ export async function addComponent(data?: any, options?: { [key: string]: any })
 }
 /** 更新组件类型 DELETE */
 export async function updateComponent(data?: any, options?: { [key: string]: any }) {
-  return request('/api/global/component', {
+  return request(defaultProxy + '/global/component', {
     method: 'PUT',
     data: data,
     ...(options || {}),
@@ -66,7 +68,7 @@ export async function updateComponent(data?: any, options?: { [key: string]: any
 
 /** 删除组件类型 DELETE  */
 export async function deleteComponent(data?: any, options?: { [key: string]: any }) {
-  return request('/api/global/component', {
+  return request(defaultProxy + '/global/component', {
     method: 'DELETE',
     data: data,
     ...(options || {}),

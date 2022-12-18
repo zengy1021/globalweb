@@ -8,12 +8,21 @@
   vertical-align: middle;
   cursor: pointer;
   &:hover {
-    background: rgba(255, 77, 79, 0.1);
+    background: rgba(24, 144, 255, 0.1);
     border-radius: 4px;
     :global {
       .icon {
-        color: #ff4d4f;
+        color: #1890ff !important;
+      }
+      .diabled_icon {
+        color: #ccc !important;
       }
     }
+  }
+}
+.diabled_box {
+  cursor: not-allowed;
+  &:hover {
+    background: rgba(0, 0, 0, 0);
   }
 }

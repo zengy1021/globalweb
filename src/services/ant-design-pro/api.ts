@@ -15,10 +15,13 @@ import { request, useModel } from 'umi';
 //   };
 // });
 // const { initialState } = useModel('@@initialState');
+// const defaultProxy = process.env.NODE_ENV == 'development' ? '/api' : '';
+const defaultProxy = process.env.NODE_ENV == 'development' ? '/api' : '/owm';
+
 // const { token } = initialState;
 /** 获取当前的用户 GET /api/menu/auth */
 export async function currentUser(options?: { [key: string]: any }) {
-  return request('/api/sys/menu/auth', {
+  return request(defaultProxy + '/sys/menu/auth', {
     method: 'GET',
     // headers: {
     // Authorization: token,
@@ -27,17 +30,17 @@ export async function currentUser(options?: { [key: string]: any }) {
   });
 }
 
-/** 退出登录接口 POST /api/logout */
+/** 退出登录接口 POSTdefaultProxy+ /logout */
 export async function outLogin(options?: { [key: string]: any }) {
-  return request('/api/sys/logout', {
+  return request(defaultProxy + '/sys/logout', {
     method: 'GET',
     ...(options || {}),
   });
 }
 
-/** 登录接口 POST /api/login */
+/** 登录接口 POSTdefaultProxy+ /login */
 export async function login(body: any, options?: { [key: string]: any }) {
-  return request('/api/login', {
+  return request(defaultProxy + '/login', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -47,15 +50,15 @@ export async function login(body: any, options?: { [key: string]: any }) {
   });
 }
 
-/** 此处后端没有提供注释 GET /api/notices */
+/** 此处后端没有提供注释 GETdefaultProxy+ /notices */
 export async function getNotices(options?: { [key: string]: any }) {
-  return request<API.NoticeIconList>('/api/notices', {
+  return request<API.NoticeIconList>(defaultProxy + '/notices', {
     method: 'GET',
     ...(options || {}),
   });
 }
 
-/** 获取规则列表 GET /api/rule */
+/** 获取规则列表 GETdefaultProxy+ /rule */
 export async function rule(
   params: {
     // query
@@ -66,7 +69,7 @@ export async function rule(
   },
   options?: { [key: string]: any },
 ) {
-  return request<API.RuleList>('/api/rule', {
+  return request<API.RuleList>(defaultProxy + '/rule', {
     method: 'GET',
     params: {
       ...params,
@@ -75,33 +78,33 @@ export async function rule(
   });
 }
 
-/** 新建规则 PUT /api/rule */
+/** 新建规则 PUTdefaultProxy+ /rule */
 export async function updateRule(options?: { [key: string]: any }) {
-  return request<API.RuleListItem>('/api/rule', {
+  return request<API.RuleListItem>(defaultProxy + '/rule', {
     method: 'PUT',
     ...(options || {}),
   });
 }
 
-/** 新建规则 POST /api/rule */
+/** 新建规则 POSTdefaultProxy+ /rule */
 export async function addRule(options?: { [key: string]: any }) {
-  return request<API.RuleListItem>('/api/rule', {
+  return request<API.RuleListItem>(defaultProxy + '/rule', {
     method: 'POST',
     ...(options || {}),
   });
 }
 
-/** 删除规则 DELETE /api/rule */
+/** 删除规则 DELETEdefaultProxy+ /rule */
 export async function removeRule(options?: { [key: string]: any }) {
-  return request<Record<string, any>>('/api/rule', {
+  return request<Record<string, any>>(defaultProxy + '/rule', {
     method: 'DELETE',
     ...(options || {}),
   });
 }
 
-/** 统一上传 POST /api/sys/file/upload*/
+/** 统一上传 POSTdefaultProxy+ /sys/file/upload*/
 export async function upload(body: any, options?: { [key: string]: any }) {
-  return request('/api/file/upload', {
+  return request(defaultProxy + '/file/upload', {
     method: 'POST',
     data: body,
     ...(options || {}),

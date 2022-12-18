@@ -181,6 +181,11 @@
   },
   // ##########文章--end
   {
+    path: '/previewContent',
+    layout: false,
+    component: './preview',
+  },
+  {
     path: '/',
     component: './Welcome',
   },

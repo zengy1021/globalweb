@@ -57,7 +57,13 @@ export default function preview() {
     setTemplateObj({ ...templateObj, components: newChildren });
   };
   // 预览模板事件
-  const preview = () => {};
+  const previewBtn = () => {
+    localStorage.setItem('previewData', JSON.stringify(templateObj.components) || '');
+    // history.push('/#/previewContent');
+    // window.open('https://apps.echatsoft.com:9443/cms/previewContent');
+    window.open('https://apps.echatsoft.com:9443/cms/#/previewContent');
+    // window.open('/previewContent');
+  };
   return (
     <div>
       {/* 内容区域 */}
@@ -68,7 +74,7 @@ export default function preview() {
               {templateObj.templateName || ''}
               <div className={style.header_left_icon}>
                 <IconBtn
-                  handleClick={() => preview()}
+                  handleClick={() => previewBtn()}
                   icon="icon-xianxing_jiankong_1"
                   isBtn
                   color="#888888"

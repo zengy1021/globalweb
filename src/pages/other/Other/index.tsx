@@ -11,19 +11,19 @@ const defaultTabList = [] || [
   {
     name: '导航首页',
     id: '1',
-    url: '',
+    fileName: '',
     content: '代码',
   },
   {
     name: '导航通用',
     id: '2',
-    url: '',
+    fileName: '',
     content: '代码',
   },
   {
     name: '底部',
     id: '3',
-    url: '',
+    fileName: '',
     content: '代码',
   },
 ];
@@ -59,6 +59,10 @@ const MenuPage = () => {
       res.data.forEach((item: any) => {
         item.id = item.contentId;
         item.name = item.contentName;
+        item.title = item.title;
+        item.fileName = item.fileName;
+        item.description = item.description;
+        item.keywords = item.keywords.split(',') || [];
       });
       setTabList([...res.data]);
     }
@@ -70,8 +74,11 @@ const MenuPage = () => {
     const res = await updateItem({
       contentId: tabObj.id,
       contentName: obj.name,
-      url: obj.url,
+      fileName: obj.fileName,
       content: obj.content,
+      title: obj.title,
+      description: obj.description,
+      keywords: obj.keywords.join(','),
     });
     if (res.code == 200) {
       message.success('操作成功');
@@ -152,7 +159,6 @@ const MenuPage = () => {
       }
     } else if (modalObj.type == 2) {
       //删除
-      debugger;
       const result = await deleteItem({
         contentId: modalObj.data.id,
       });

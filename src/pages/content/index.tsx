@@ -14,7 +14,7 @@ import moment from 'moment';
 import { history, useModel } from 'umi';
 import TagBox from '@/components/TagBox';
 import TableBox from '@/components/TableBox';
-import { commitApprove, getList, removeItem } from './api';
+import { commitApprove, getContent, getList, removeItem, resetItem } from './api';
 import lodash from 'lodash';
 interface DataType {
   key: string;
@@ -83,6 +83,11 @@ const TableList: React.FC = () => {
       disabled: false,
     },
     {
+      label: <span style={{ color: '#ffc53d' }}>{'回退'}</span>,
+      key: '5',
+      disabled: false,
+    },
+    {
       label: <span style={{ color: '#ff4d4f' }}>{'删除'}</span>,
       key: '4',
       disabled: false,
@@ -93,7 +98,7 @@ const TableList: React.FC = () => {
   const dropItems2: MenuProps['items'] = [
     // const dropItems: MenuProps['items'] = [
     {
-      label: '修改',
+      label: <span style={{ color: '#cccccc' }}>{'修改'}</span>,
       key: '1',
       disabled: true,
     },
@@ -103,15 +108,19 @@ const TableList: React.FC = () => {
       disabled: false,
     },
     {
-      label: '提交',
+      label: <span style={{ color: '#cccccc' }}>{'提交'}</span>,
       key: '3',
+      disabled: true,
+    },
+    {
+      label: <span style={{ color: '#cccccc' }}>{'回退'}</span>,
+      key: '5',
       disabled: true,
     },
     {
       label: '删除',
       key: '4',
       disabled: true,
-
       // render: () => <span style={{ color: 'red' }}>{'删除'}</span>,
     },
   ];
@@ -128,8 +137,13 @@ const TableList: React.FC = () => {
       disabled: false,
     },
     {
-      label: '提交',
+      label: <span style={{ color: '#cccccc' }}>{'提交'}</span>,
       key: '3',
+      disabled: true,
+    },
+    {
+      label: <span style={{ color: '#cccccc' }}>{'回退'}</span>,
+      key: '5',
       disabled: true,
     },
     {
@@ -140,39 +154,75 @@ const TableList: React.FC = () => {
       // render: () => <span style={{ color: 'red' }}>{'删除'}</span>,
     },
   ];
-  const getItems = (record: any) => {
-    let dorpList: MenuProps['items'] = lodash.cloneDeep(dropItems);
-    if (record.status == 2) {
-      dorpList?.forEach((item: any) => {
-        if ([1, 3, 4].includes(item.key)) {
-          item.disabled = true;
-        }
-      });
+  const dropItems4: MenuProps['items'] = [
+    // const dropItems: MenuProps['items'] = [
+    {
+      label: '修改',
+      key: '1',
+      disabled: false,
+    },
+    {
+      label: '预览',
+      key: '2',
+      disabled: false,
+    },
+    {
+      label: '提交',
+      key: '3',
+      disabled: false,
+    },
+    {
+      label: <span style={{ color: '#cccccc' }}>{'回退'}</span>,
+      key: '5',
+      disabled: true,
+    },
+    {
+      label: <span style={{ color: '#ff4d4f' }}>{'删除'}</span>,
+      key: '4',
+      disabled: false,
+
+      // render: () => <span style={{ color: 'red' }}>{'删除'}</span>,
+    },
+  ];
+  const getComponentsData = async (contentId: string) => {
+    const res = await getContent({ contentId });
+    if (res.code == 200) {
+      localStorage.setItem('previewData', JSON.stringify(res.data.components) || '');
+      // history.push('/#/previewContent');
+      // window.open('https://apps.echatsoft.com:9443/cms/previewContent');
+      window.open('https://apps.echatsoft.com:9443/cms/#/previewContent');
+      // window.open('/previewContent');
     }
-    if (record.status == 3) {
-      dorpList?.forEach((item: any) => {
-        if ([3].includes(item.key)) {
-          item.disabled = true;
-        }
-      });
-    }
-    return dorpList;
+  };
+  const reback = async (item: any) => {
+    setModalObj({
+      ...modalObj,
+      show: true,
+      title: '回退数据',
+      type: 3,
+      message: '确认回退数据？',
+      data: item,
+    });
   };
   const onDropClick: any = (obj: any, item: any) => {
     // message.info(`Click on item ${obj.key}`);
-    // console.log(item);
+    console.log(item);
 
     switch (obj.key) {
       case '1': // 修改模板
         setDrawerObj({ ...drawerObj, show: true, data: item });
         break;
       case '2': // 预览
+        getComponentsData(item.contentId);
         break;
       case '3': // 提交
         commit(item);
         break;
       case '4': // 删除组件 二次确认
         remove(item);
+        break;
+      case '5': // 回退版本 二次确认
+        reback(item);
         break;
       default:
         return;
@@ -239,16 +289,16 @@ const TableList: React.FC = () => {
       ),
     },
     {
-      title: '当前版本',
-      dataIndex: 'version',
-      key: 'version',
+      title: '线上版本',
+      dataIndex: 'hasPro',
+      key: 'hasPro',
       width: 157,
       ellipsis: {
         showTitle: false,
       },
-      render: (address: any) => (
-        <Tooltip placement="topLeft" title={address}>
-          {address}
+      render: (address: any, _: any) => (
+        <Tooltip placement="topLeft" title={_.fileName}>
+          {address && _.fileName}
         </Tooltip>
       ),
     },
@@ -266,13 +316,21 @@ const TableList: React.FC = () => {
       fixed: 'right',
       render: (_, record: any) => (
         <Space size="middle">
-          {[1, 3, 4].includes(record.status) && (
+          {[1, 3, 4].includes(record.status) ? (
             <IconBtn
               icon="icon-mianxing_bianji_1"
               size={'20px'}
               color="#888888"
               isBtn={true}
               handleClick={() => doClick(record)}
+            />
+          ) : (
+            <IconBtn
+              icon="icon-mianxing_bianji_1"
+              size={'20px'}
+              color="#ccc"
+              isBtn={true}
+              disabled
             />
           )}
 
@@ -281,7 +339,9 @@ const TableList: React.FC = () => {
             // getItems(record) dropItems
             menu={{
               items: [1, 4].includes(record.status)
-                ? dropItems
+                ? record.hasPro
+                  ? dropItems
+                  : dropItems4
                 : [2].includes(record.status)
                 ? dropItems2
                 : [3].includes(record.status)
@@ -427,6 +487,14 @@ const TableList: React.FC = () => {
       const result = await removeItem({ contentId: modalObj.data.contentId });
       if (result.code == 200) {
         message.success('删除成功');
+        requestData(currentPath);
+        closeModal();
+      }
+    } else if (modalObj.type == 3) {
+      // 回退
+      const result = await resetItem({ contentId: modalObj.data.contentId });
+      if (result.code == 200) {
+        message.success('回退成功');
         requestData(currentPath);
         closeModal();
       }

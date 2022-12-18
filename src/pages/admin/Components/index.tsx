@@ -102,7 +102,7 @@ const Components = () => {
   const requestData = async () => {
     const res = await getList();
     if (res.code == 200) {
-      console.log(res.data);
+      // console.log(res.data);
       // setComps([]);
       formatList = res.data;
       await setComps([...res.data]);
@@ -162,7 +162,11 @@ const Components = () => {
           }
         } else if (modalObj.data?.elementId && modalObj.data?.componentId) {
           // 2组件重命名
-          const result = await updateComponent({ ...nameList, id: modalObj.data?.componentId });
+          const result = await updateComponent({
+            ...nameList,
+            id: modalObj.data?.componentId,
+            elementName: modalObj.data?.elementName,
+          });
           if (result.code == 200) {
             message.success('更新组件成功');
             await requestData();

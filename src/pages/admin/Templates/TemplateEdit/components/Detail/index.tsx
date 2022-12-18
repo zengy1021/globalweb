@@ -2,7 +2,6 @@ import HtmlChangeModal from '@/components/HtmlChangeModal';
 import React, { useState, useRef, useEffect } from 'react';
 import style from '../../index.less';
 import CompsList from '@/components/CompsList';
-import htmlComp from './htmlJson';
 import { Tabs } from 'antd';
 import EditComps from '@/components/EditComps';
 const defaultModal = {
@@ -34,6 +33,15 @@ const Detail = ({ compChange, templateObj, childrenChange, compsList }: DetialPr
   // 左侧菜单列表数据
   const [compList, setCompList] = useState<any>([]);
   // 监听双击事件
+  const [activeKey, setActiveKey] = useState<any>('1');
+  // 当前点击组件下标值
+  const [currentCompIndex, setCurrentCompIndex] = useState<any>(0);
+  // 监听点击事件
+  const eventListenClick = async (e: any, index: number) => {
+    // console.log(index);
+    await setActiveKey('2');
+    await setCurrentCompIndex(index);
+  };
   const eventListenDB = (e: any, index: number) => {
     // 监听双击事件
     if (e.target.ondblclick) {
@@ -147,6 +155,17 @@ const Detail = ({ compChange, templateObj, childrenChange, compsList }: DetialPr
     console.log('编辑列表事件', comps);
     childrenChange(comps);
   };
+  const compsClick = async (item: any, index: number) => {
+    // console.log('editMoveClick:', item, index);
+    // console.log('element:', refArr[index]);
+    // 移动到当前项
+    // refArr[index].current?.scrollIntoView({ behavior: 'smooth' });
+    // setCurrentCompIndex(index);
+    await setCurrentCompIndex(index);
+    setImmediate(() => {
+      refArr[index].current?.scrollIntoView({ behavior: 'smooth' });
+    });
+  };
   const tabsItems = [
     {
       label: '组件',
@@ -156,13 +175,28 @@ const Detail = ({ compChange, templateObj, childrenChange, compsList }: DetialPr
     {
       label: '编辑',
       key: '2',
-      children: <EditComps data={currentComps} compsChange={compsChange} />,
+      children: (
+        <EditComps
+          data={currentComps}
+          currentCompIndex={currentCompIndex}
+          compsChange={compsChange}
+          compsClick={compsClick}
+        />
+      ),
     },
   ];
   return (
     <div className={style.content_detail_box}>
       <div className={style.content_left_box}>
-        <Tabs items={tabsItems} centered />
+        <Tabs
+          items={tabsItems}
+          centered
+          activeKey={activeKey}
+          onChange={(actKey) => {
+            setActiveKey(actKey);
+            setCurrentCompIndex(0);
+          }}
+        />
       </div>
       <div className={style.content_right_box}>
         {/* 头部html */}
@@ -172,6 +206,7 @@ const Detail = ({ compChange, templateObj, childrenChange, compsList }: DetialPr
             <div
               key={index}
               className={style.content_right_box_preview}
+              onClick={(e) => eventListenClick(e, index)}
               onDoubleClick={(e) => eventListenDB(e, index)}
               onBlur={(e) => eventListenBlur(e, index)}
               dangerouslySetInnerHTML={{

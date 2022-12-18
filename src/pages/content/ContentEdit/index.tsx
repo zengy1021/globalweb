@@ -7,12 +7,11 @@ import { useEffect, useState } from 'react';
 // import { useParams } from 'react-router-dom';
 import { getList as getComponentsData } from '../../admin/Components/api';
 
-import htmlComp from './components/Detail/htmlJson';
 import IconBtn from '@/components/IconBtn';
 import { getContent, updateItemDeep } from '../api';
 export default function preview() {
   let params: any = useParams();
-  const [contentObj, setContentObj] = useState<any>([]);
+  const [contentObj, setContentObj] = useState<any>({});
   const [compsData, setCompsData] = useState<any>([]);
   useEffect(() => {
     requestData();
@@ -36,10 +35,13 @@ export default function preview() {
   };
   const save = async () => {
     console.log('save', contentObj);
-    const res = await updateItemDeep({
-      contentId: contentObj.id,
+    const param = {
+      contentId: contentObj.contentId,
       components: contentObj.components,
-    });
+    };
+    console.log(param);
+
+    const res = await updateItemDeep(param);
     if (res.code == 200) {
       message.success('更新成功');
       cancel();
@@ -55,11 +57,15 @@ export default function preview() {
   };
   const childrenChange = (newChildren: any) => {
     console.log('childrenChange', newChildren);
-    setContentObj({ ...contentObj, components: newChildren });
+    setContentObj({ ...contentObj, components: [...newChildren] });
   };
   // 预览模板事件
   const previewContent = () => {
-    console.log('contentObj', contentObj);
+    console.log('contentObj', contentObj.components);
+    localStorage.setItem('previewData', JSON.stringify(contentObj.components) || '');
+    // history.push('/#/previewContent');
+    window.open('https://apps.echatsoft.com:9443/cms/#/previewContent');
+    // window.open('/previewContent');
   };
   return (
     <div>

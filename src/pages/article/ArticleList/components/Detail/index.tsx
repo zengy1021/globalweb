@@ -70,7 +70,7 @@ export default function Detail(props: any) {
         successMessage = '新增成功';
       } else {
         // 编辑
-        parmas.id = props.data?.contentId;
+        parmas.contentId = props.data?.contentId;
         successMessage = '更新成功';
         res = await updateItem(parmas);
       }

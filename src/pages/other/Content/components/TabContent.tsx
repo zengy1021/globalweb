@@ -1,5 +1,5 @@
 import style from '../index.less';
-import { Button, Col, Form, Input, Row } from 'antd';
+import { Button, Col, Form, Input, Row, Select } from 'antd';
 import { useEffect, useState } from 'react';
 const { TextArea } = Input;
 interface TabContentProps {
@@ -15,8 +15,11 @@ const TabContent = ({ changeValue, tabObj }: TabContentProps) => {
     // setCode(value);
     form.setFieldsValue({
       name: tabObj.name,
-      url: tabObj.url,
+      fileName: tabObj.fileName || '',
       content: tabObj.content,
+      title: tabObj.title,
+      description: tabObj.description,
+      keywords: tabObj.keywords,
     });
   }, [tabObj]);
   // const onChange = (e: any) => {
@@ -41,8 +44,11 @@ const TabContent = ({ changeValue, tabObj }: TabContentProps) => {
     // 还原数据
     form.setFieldsValue({
       name: tabObj.name,
-      url: tabObj.url,
+      fileName: tabObj.fileName || '',
       content: tabObj.content,
+      title: tabObj.title,
+      description: tabObj.description,
+      keywords: tabObj.keywords,
     });
     setIsEdit(false);
   };
@@ -110,8 +116,8 @@ const TabContent = ({ changeValue, tabObj }: TabContentProps) => {
             </Col>
             <Col span={12} style={{ paddingRight: '0px' }}>
               <Form.Item
-                label="url"
-                name="url"
+                label="fileName"
+                name="fileName"
                 rules={[
                   {
                     required: true,
@@ -119,6 +125,51 @@ const TabContent = ({ changeValue, tabObj }: TabContentProps) => {
                 ]}
               >
                 <Input />
+              </Form.Item>
+            </Col>
+            <Col span={12} style={{ paddingLeft: '0px' }}>
+              <Form.Item
+                label="title"
+                name="title"
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={12} style={{ paddingRight: '0px' }}>
+              <Form.Item
+                label="description"
+                name="description"
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={24} style={{ padding: '0px' }}>
+              <Form.Item
+                label="keywords"
+                name="keywords"
+                rules={[
+                  {
+                    required: true,
+                  },
+                ]}
+              >
+                <Select
+                  mode="tags"
+                  // style={{ width: '100%' }}
+                  placeholder="请输入关键词"
+                  // onChange={handleChange}
+                  // options={options}
+                />
               </Form.Item>
             </Col>
           </Row>

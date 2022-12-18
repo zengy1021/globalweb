@@ -1,7 +1,7 @@
 // import Footer from '@/components/Footer';
 // import RightContent from '@/components/RightContent';
 // import { BookOutlined, LinkOutlined } from '@ant-design/icons';
-import type { Settings as LayoutSettings } from '@ant-design/pro-components';
+import { recordKeyToString, Settings as LayoutSettings } from '@ant-design/pro-components';
 import { PageLoading, SettingDrawer } from '@ant-design/pro-components';
 import { Button, message } from 'antd';
 import type { RequestConfig, RunTimeLayoutConfig } from 'umi';
@@ -93,6 +93,12 @@ const formatMenuList = (data: any) => {
       {
         path: '/',
         component: './Welcome',
+      },
+      {
+        // 预览页面
+        path: '/previewContent',
+        layout: false,
+        component: './preview',
       },
       {
         component: './404',
@@ -287,12 +293,15 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     //   console.log('menuList', menuList);
     //   return menuList;
     // },
+    menuDataRender: () => {
+      return formatMenuList(initialState?.currentMenu);
+    },
     menu: {
       locale: false,
-      request: async () => {
-        let result = await formatMenuList(initialState?.currentMenu);
-        return result;
-      },
+      // request: async () => {
+      //   let result = await formatMenuList(initialState?.currentMenu);
+      //   return result;
+      // },
     },
     // menuItemRender: (item: any, dom: any) => (
     //   <div
@@ -321,7 +330,13 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       <div style={{ textAlign: 'center', height: '48px', marginBottom: '40px' }}>
         <Button
           type="default"
-          style={{ width: '180px', height: '48px', borderRadius: '6px', background: ' #f2f5f9' }}
+          style={{
+            width: '180px',
+            height: '48px',
+            borderRadius: '6px',
+            background: ' #f2f5f9',
+            borderColor: 'transparent',
+          }}
         >
           打开测试环境
         </Button>
@@ -332,6 +347,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     // 增加一个 loading 的状态
     childrenRender: (children, props) => {
       // if (initialState?.loading) return <PageLoading />;
+
       return (
         <>
           {children}
@@ -380,7 +396,7 @@ export const request: RequestConfig = {
 
       if (response.status == 200) {
         if (data.code != 200) {
-          if (data.code == 402) {
+          if (data.code == 401) {
             //
             message.error({
               content: '用户身份失效, 请重新登录',
@@ -393,9 +409,18 @@ export const request: RequestConfig = {
           }
         }
       } else {
-        message.error({
-          content: data.msg,
-        });
+        if (data.code == 401) {
+          //
+          message.error({
+            content: '用户身份失效, 请重新登录',
+          });
+          history.push(loginPath);
+        } else {
+          message.error({
+            content: data.msg,
+          });
+        }
+        // return;
         return data;
       }
       return response;

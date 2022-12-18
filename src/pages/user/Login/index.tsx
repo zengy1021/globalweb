@@ -43,7 +43,7 @@ const Login = () => {
         // }));
         localStorage.echatToken = msg.data;
         // 获取用户相关信息
-        await fetchUserInfo(msg.data);
+        fetchUserInfo(msg.data);
         /** 此方法会跳转到 redirect 参数所在的位置 */
         if (!history) {
           return;
@@ -51,14 +51,15 @@ const Login = () => {
 
         const { query } = history.location;
         const { redirect } = query as { redirect: string };
-        console.log('login:redirect', redirect);
+        // console.log('login:redirect', redirect);
         const goPath = redirect || '/';
-        console.log('login:goPath', goPath);
-
-        history.push(goPath);
+        // console.log('login:goPath', goPath);
+        setTimeout(async () => {
+          await history.push(goPath);
+        }, 500);
         return;
       } else {
-        message.error(msg.msg);
+        // message.error(msg.msg);
       }
       // // 如果失败去设置用户错误信息 ########################################
       // setUserLoginState(msg);

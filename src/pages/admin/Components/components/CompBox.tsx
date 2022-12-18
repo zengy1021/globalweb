@@ -71,7 +71,7 @@ export default function CompBox(props: any) {
   };
   const modalSave = () => {
     // 弹窗保存事件
-    console.log('保存');
+    // console.log('保存');
     closeModal();
   };
   // const remove = (item: any) => {
@@ -124,7 +124,12 @@ export default function CompBox(props: any) {
                     onClick={() => goComps(child)}
                   >
                     <div className={style.comp_item_img}>
-                      <Image width={'100%'} src={child.componentImage} preview={false}></Image>
+                      <Image
+                        width={'100%'}
+                        height={'100%'}
+                        src={child.componentImage}
+                        preview={false}
+                      ></Image>
                     </div>
                     <div className={style.comp_item_footer}>
                       <div className={style.comp_item_footer_name}>{child.componentName}</div>
