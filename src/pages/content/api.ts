@@ -87,7 +87,7 @@ export async function resetItem(
   },
   options?: { [key: string]: any },
 ) {
-  return request(defaultProxy + '/global/content/reset', {
+  return request(defaultProxy + '/global/content/rollBack', {
     method: 'GET',
     params,
     ...(options || {}),

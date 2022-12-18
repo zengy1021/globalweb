@@ -23,7 +23,7 @@ import moment from 'moment';
 import TypesMenu from './components/TypesMenu';
 import TableBox from '@/components/TableBox';
 import TagBox from '@/components/TagBox';
-import { commitApprove, getList, getTypeList, removeItem, removeType } from './api';
+import { commitApprove, getList, getTypeList, removeItem, removeType, resetItem } from './api';
 import { addType } from './api';
 const { RangePicker } = DatePicker;
 interface DrawerProps {
@@ -152,6 +152,16 @@ const TableList: React.FC = () => {
       // render: () => <span style={{ color: 'red' }}>{'删除'}</span>,
     },
   ];
+  const reback = async (item: any) => {
+    setModalObj({
+      ...modalObj,
+      show: true,
+      title: '回退数据',
+      type: 5,
+      message: '确认回退数据？',
+      data: item,
+    });
+  };
   const onDropClick: any = (obj: any, item: any) => {
     // message.info(`Click on item ${obj.key}`);
     // console.log(item);
@@ -163,6 +173,10 @@ const TableList: React.FC = () => {
         break;
       case '2': // 删除组件 二次确认
         remove(item);
+        break;
+      case '3': // 回退文章数据 二次确认
+        // remove(item);
+        reback(item);
         break;
       default:
         return;
@@ -506,6 +520,14 @@ const TableList: React.FC = () => {
         getPageList();
         requestData();
       }
+    } else if (modalObj.type == 5) {
+      // 回退
+      const result = await resetItem({ contentId: modalObj.data.contentId });
+      if (result.code == 200) {
+        message.success('回退成功');
+        getPageList();
+        requestData();
+      }
     }
 
     // 调用接口
@@ -656,7 +678,7 @@ const TableList: React.FC = () => {
         </div>
       </PageLayout>
       {/* 滑窗区域 */}
-      <DrawerBox show={drawerObj.show} closeDrawer={closeDrawer}>
+      <DrawerBox show={drawerObj.show}>
         <Detail closeDrawer={closeDrawer} data={drawerObj.data} />
       </DrawerBox>
       {/* 弹窗区域 */}
